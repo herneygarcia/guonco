@@ -253,14 +253,15 @@ cases:
     lang: es
     transcript: >
       Coriocarcinoma puro, BHCG al diagnóstico de mil doscientos, LDH cuatrocientos,
-      marcadores postorquiectomía normalizados: AFP uno punto cinco, BHCG cero punto ocho.
-      Actualmente libre de enfermedad.
+      marcadores postorquiectomía normalizados: AFP uno punto cinco, BHCG cero punto ocho,
+      LDH postorquiectomía doscientos diez. Actualmente libre de enfermedad.
     expected:
       histologia: CORIOCARCINOMA
       bhcg: 1200
       ldh: 400
       afp_post: 1.5
       bhcg_post: 0.8
+      ldh_post: 210
       estado_actual: LIBRE_ENFERMEDAD
 
   # ---------------- PENE ----------------

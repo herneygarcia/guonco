@@ -860,6 +860,14 @@ pathologies:
         required: false
         label_es: "B-HCG postorquiectomía (mUI/mL)"
         label_en: "Post-orchiectomy B-HCG (mUI/mL)"
+      - id: ldh_post
+        group: seguimiento
+        code: LDH_POSTOP
+        type: number
+        unit: U/L
+        required: false
+        label_es: "LDH postorquiectomía (U/L)"
+        label_en: "Post-orchiectomy LDH (U/L)"
       - id: tac_general
         group: diagnostico
         code: CT_TAP
