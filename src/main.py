@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import pathlib
 from typing import Any
 
@@ -12,11 +13,21 @@ from fastapi.staticfiles import StaticFiles
 from src import export, records, schema, validation
 from src import sync as sync_mod
 from src.config import apps_script_url, groq_api_key
+from src.db import init_db
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 WEB_DIR = ROOT / "web"
 
-app = FastAPI(title="GuOnco Registry", version=schema.META["version"])
+
+@contextlib.asynccontextmanager
+async def lifespan(_app: FastAPI):
+    init_db()
+    yield
+
+
+app = FastAPI(
+    title="GuOnco Registry", version=schema.META["version"], lifespan=lifespan
+)
 
 
 def _http_error(status: int, error: str, **detail: Any) -> JSONResponse:
