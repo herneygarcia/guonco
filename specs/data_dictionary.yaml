@@ -289,8 +289,8 @@ pathologies:
         label_es: "Extensión extraprostática"
         label_en: "Extraprostatic extension"
         options:
-          - {code: NO,        es: "No",        en: "No"}
-          - {code: SI,        es: "Sí",        en: "Yes"}
+          - {code: "NO",        es: "No",        en: "No"}
+          - {code: "SI",        es: "Sí",        en: "Yes"}
           - {code: NO_APLICA, es: "No aplica", en: "Not applicable"}
       - id: invasion_vs
         code: SV_INVASION
@@ -299,8 +299,8 @@ pathologies:
         label_es: "Invasión vesículas seminales"
         label_en: "Seminal vesicle invasion"
         options:
-          - {code: NO,        es: "No",        en: "No"}
-          - {code: SI,        es: "Sí",        en: "Yes"}
+          - {code: "NO",        es: "No",        en: "No"}
+          - {code: "SI",        es: "Sí",        en: "Yes"}
           - {code: NO_APLICA, es: "No aplica", en: "Not applicable"}
       - id: psa_post
         code: PSA_POSTOP
@@ -615,7 +615,7 @@ pathologies:
         label_es: "Trombosis venosa"
         label_en: "Venous tumor thrombus"
         options:
-          - {code: NO,                 es: "No",                    en: "None"}
+          - {code: "NO",                 es: "No",                    en: "None"}
           - {code: VENA_RENAL,         es: "Vena renal",            en: "Renal vein"}
           - {code: VCI_INFRAHEPATICA,  es: "VCI infrahepática",     en: "IVC infrahepatic"}
           - {code: VCI_SUPRAHEPATICA,  es: "VCI suprahepática",     en: "IVC suprahepatic"}
@@ -1293,7 +1293,7 @@ pathologies:
         options:
           - {code: NO_REALIZADO,        es: "No realizado",           en: "Not performed"}
           - {code: SIN_ALTERACIONES,    es: "Sin alteraciones",       en: "Normal"}
-          - {code: ADENOPATIAS_INDUINALES, es: "Adenopatías inguinales", en: "Inguinal adenopathy"}
+          - {code: ADENOPATIAS_INGUINALES, es: "Adenopatías inguinales", en: "Inguinal adenopathy"}
           - {code: ADENOPATIAS_PELVICAS, es: "Adenopatías pélvicas",  en: "Pelvic adenopathy"}
           - {code: METASTASIS,          es: "Metástasis",             en: "Metastases"}
           - {code: OTRO,                es: "Otro",                   en: "Other"}

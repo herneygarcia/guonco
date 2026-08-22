@@ -1,0 +1,433 @@
+# Golden cases for extraction evaluation (harness/run_eval.py).
+# Synthetic dictations only — no real patient data.
+# `expected` values must be language-neutral dictionary CODES.
+# `must_be_null`: fields that MUST NOT be extracted (hallucination checks).
+
+cases:
+  # ---------------- PROSTATA ----------------
+  - id: prostata_001
+    pathology: prostata
+    lang: es
+    transcript: >
+      Paciente de 68 años, masculino. PSA al diagnóstico de doce ng por mililitro.
+      Biopsia de próstata con adenocarcinoma acinar, Gleason siete más cuatro más tres,
+      grupo ISUP tres al diagnóstico del quince de marzo de 2024.
+    expected:
+      edad: 68
+      sexo: MASCULINO
+      psa_diagnostico: 12
+      histologia: ADENO_ACINAR
+      gleason: "7_4+3"
+      isup: "3"
+      fecha_diagnostico: "2024-03-15"
+
+  - id: prostata_002
+    pathology: prostata
+    lang: es
+    transcript: >
+      Varón de 75 años, PSA ocho punto cinco, Gleason seis más tres más tres,
+      ISUP uno. Manejo con vigilancia activa.
+    expected:
+      edad: 75
+      sexo: MASCULINO
+      psa_diagnostico: 8.5
+      gleason: "6_3+3"
+      isup: "1"
+      procedimiento: VIGILANCIA_ACTIVA
+    must_be_null: [histologia]
+
+  - id: prostata_003
+    pathology: prostata
+    lang: en
+    transcript: >
+      Seventy-two year old male, PSA fifteen point two. Biopsy shows acinar
+      adenocarcinoma, Gleason four plus five, ISUP group five. Bone scan shows
+      bone metastases. Started hormone therapy.
+    expected:
+      edad: 72
+      sexo: MASCULINO
+      psa_diagnostico: 15.2
+      histologia: ADENO_ACINAR
+      gleason: "9_4+5"
+      isup: "5"
+      gammagrafia: METASTASIS_OSEAS
+      procedimiento: HORMONOTERAPIA
+
+  - id: prostata_004
+    pathology: prostata
+    lang: es
+    transcript: >
+      Postoperatorio de prostatectomía radical robótica. PSA postoperatorio cero punto cero dos,
+      márgenes negativos, sin extensión extraprostática, sin invasión de vesículas seminales.
+    expected:
+      procedimiento: PR_ROBOTICA
+      psa_post: 0.02
+      margenes: NEGATIVOS
+      extension_extraprost: "NO"
+      invasion_vs: "NO"
+    must_be_null: [tnm_t]
+
+  - id: prostata_005
+    pathology: prostata
+    lang: es
+    transcript: >
+      En seguimiento, PSA tres punto cuatro. PSMA PET positivo ganglionar.
+      Paciente con resistencia a la castración.
+    expected:
+      psa_seguimiento: 3.4
+      psma_pet: POSITIVO_GANGLIONAR
+      estado_actual: RESISTENTE_CASTRACION
+
+  - id: prostata_006
+    pathology: prostata
+    lang: es
+    transcript: >
+      Hombre de 66 años con cáncer de próstata, PSA veinte, Gleason nueve más cuatro más cinco? no,
+      perdón, nueve más cuatro más cuatro, ISUP cuatro. Gammagrafía ósea sin alteraciones.
+    expected:
+      edad: 66
+      psa_diagnostico: 20
+      gleason: "8_4+4"
+      isup: "4"
+      gammagrafia: SIN_ALTERACIONES
+
+  # ---------------- VEJIGA ----------------
+  - id: vejiga_001
+    pathology: vejiga
+    lang: es
+    transcript: >
+      Mujer de 62 años, carcinoma urotelial de vejiga de alto grado, tumor Ta,
+      sin invasión muscular. Se realizó RTU de vejiga.
+    expected:
+      edad: 62
+      sexo: FEMENINO
+      histologia: CARCINOMA_UROTELIAL
+      grado_who: ALTO_GRADO
+      tnm_t: Ta
+      invasion_muscular: false
+      procedimiento: RTU_VEJIGA
+
+  - id: vejiga_002
+    pathology: vejiga
+    lang: es
+    transcript: >
+      Cistectomía radical con conducto ileal. Pieza con carcinoma urotelial de alto grado
+      con invasión muscular, T2b N0 M0, carcinoma in situ asociado.
+    expected:
+      grado_who: ALTO_GRADO
+      invasion_muscular: true
+      cis_asociado: true
+      tnm_t: T2b
+      tnm_n: N0
+      tnm_m: M0
+      procedimiento: CISTECTOMIA_RADICAL
+      derivacion: CONDUCTO_ILEAL
+
+  - id: vejiga_003
+    pathology: vejiga
+    lang: en
+    transcript: >
+      Bladder cancer patient, prior recurrence with two recurrences so far.
+      CT chest abdomen pelvis normal. Follow-up cystoscopy shows a Ta recurrence.
+    expected:
+      recurrencia_previa: true
+      num_recurrencias: 2
+      tac_torax_abdomen: SIN_ALTERACIONES
+      cistoscopia_seguimiento: RECURRENCIA_TA
+
+  - id: vejiga_004
+    pathology: vejiga
+    lang: es
+    transcript: >
+      Paciente con progresión tumoral, actualmente con metástasis.
+      TAC tórax abdomen pelvis con metástasis e hidronefrosis.
+    expected:
+      estado_actual: METASTASIS
+      tac_torax_abdomen: METASTASIS
+    must_be_null: [histologia]
+
+  # ---------------- RINON ----------------
+  - id: rinon_001
+    pathology: rinon
+    lang: es
+    transcript: >
+      Masa renal izquierda de cuatro punto dos centímetros, hallazgo incidental.
+      Células claras, grado ISUP dos. Nefrectomía parcial laparoscópica. pT1a.
+    expected:
+      lateralidad: IZQUIERDO
+      tamano: 4.2
+      forma_presentacion: INCIDENTAL
+      histologia: CELULAS_CLARAS
+      grado_isup: G2
+      tnm_t: T1a
+      procedimiento: NP_LAPAROSCOPICA
+
+  - id: rinon_002
+    pathology: rinon
+    lang: en
+    transcript: >
+      Right kidney clear cell carcinoma seven centimeters, symptomatic with flank pain.
+      IMDC intermediate risk, renal vein thrombus, T3a. Started sunitinib first line.
+    expected:
+      lateralidad: DERECHO
+      tamano: 7
+      forma_presentacion: SINTOMATICO
+      histologia: CELULAS_CLARAS
+      imdc: INTERMEDIO
+      trombosis_venosa: VENA_RENAL
+      tnm_t: T3a
+      terapia_sistemica: SUNITINIB
+
+  - id: rinon_003
+    pathology: rinon
+    lang: es
+    transcript: >
+      Oncocitoma renal derecho de dos punto ocho centímetros en tomografía,
+      se decide vigilancia activa.
+    expected:
+      lateralidad: DERECHO
+      tamano: 2.8
+      histologia: ONCOCITOMA
+      procedimiento: VIGILANCIA_ACTIVA
+    must_be_null: [imdc]
+
+  - id: rinon_004
+    pathology: rinon
+    lang: es
+    transcript: >
+      Tumor renal papilar tipo dos bilateral, manejado con crioablación.
+      Metástasis pulmonares en TAC de tórax. Fallecido.
+    expected:
+      lateralidad: BILATERAL
+      histologia: PAPILAR_TIPO2
+      procedimiento: CRIOABLACION
+      tac_torax: MET_PULMONARES
+      estado_actual: FALLECIDO
+
+  # ---------------- TESTICULO ----------------
+  - id: testiculo_001
+    pathology: testiculo
+    lang: es
+    transcript: >
+      Orquiectomía radical derecha. Seminoma clásico puro. AFP tres, BHCG uno punto dos,
+      LDH doscientos cincuenta. pT1a, estadio IGCCCG IA. Vigilancia activa.
+    expected:
+      lateralidad: DERECHO
+      histologia: SEMINOMA_CLASICO
+      tipo_tumor: SEMINOMA_PURO
+      afp: 3
+      bhcg: 1.2
+      ldh: 250
+      tnm_t: pT1a
+      estadio_igcccg: IA
+      procedimiento: VIGILANCIA_ACTIVA
+
+  - id: testiculo_002
+    pathology: testiculo
+    lang: en
+    transcript: >
+      Left orchiectomy for mixed germ cell tumor with embryonal carcinoma and mature teratoma.
+      Non-seminoma type. Received three cycles of BEP chemotherapy.
+    expected:
+      lateralidad: IZQUIERDO
+      histologia: TUMOR_MIXTO_GERMINAL
+      tipo_tumor: NO_SEMINOMA
+      procedimiento: BEP_X3
+    must_be_null: [estadio_igcccg]
+
+  - id: testiculo_003
+    pathology: testiculo
+    lang: es
+    transcript: >
+      Marcadores S1, estadio clínico IIB. TAC tórax abdomen pelvis con adenopatías
+      retroperitoneales de tres centímetros. AFP postorquiectomía doce.
+    expected:
+      tnm_s: S1
+      estadio_igcccg: IIB
+      tac_general: ADENOPATIAS_2_5CM
+      afp_post: 12
+
+  - id: testiculo_004
+    pathology: testiculo
+    lang: es
+    transcript: >
+      Coriocarcinoma puro, BHCG al diagnóstico de mil doscientos, LDH cuatrocientos,
+      marcadores postorquiectomía normalizados: AFP uno punto cinco, BHCG cero punto ocho.
+      Actualmente libre de enfermedad.
+    expected:
+      histologia: CORIOCARCINOMA
+      bhcg: 1200
+      ldh: 400
+      afp_post: 1.5
+      bhcg_post: 0.8
+      estado_actual: LIBRE_ENFERMEDAD
+
+  # ---------------- PENE ----------------
+  - id: pene_001
+    pathology: pene
+    lang: es
+    transcript: >
+      Carcinoma escamocelular de pene, G2 moderadamente diferenciado, T2 N0 M0.
+      Se realizó penectomía parcial.
+    expected:
+      histologia: ESCAMOCELULAR
+      grado: G2
+      tnm_t: T2
+      tnm_n: N0
+      tnm_m: M0
+      procedimiento: PENECTOMIA_PARCIAL
+
+  - id: pene_002
+    pathology: pene
+    lang: en
+    transcript: >
+      Verrucous carcinoma of the penis, well differentiated G1, managed with circumcision.
+      Staging work-up normal.
+    expected:
+      histologia: VERRUCOSO
+      grado: G1
+      procedimiento: CIRCUNCISION
+      estudios_extension: SIN_ALTERACIONES
+
+  - id: pene_003
+    pathology: pene
+    lang: es
+    transcript: >
+      Paciente con recurrencia local, luego perdido para el control.
+      Linfadenectomía inguinal bilateral realizada previamente.
+    expected:
+      estado_actual: PERDIDO_SEGUIMIENTO
+      procedimiento: LINFADENECTOMIA_ING_BIL
+
+  # ---------------- URETER (urotelial alto) ----------------
+  - id: ureter_001
+    pathology: ureter
+    lang: es
+    transcript: >
+      Carcinoma urotelial de alto grado de uréter distal izquierdo, C66.
+      T3 N0 M0. Nefroureterectomía radical laparoscópica.
+    expected:
+      cie10_subcodigo: C66
+      localizacion: URETER_DISTAL
+      lateralidad: IZQUIERDO
+      histologia: CARCINOMA_UROTELIAL
+      grado: ALTO_GRADO
+      tnm_t: T3
+      tnm_n: N0
+      tnm_m: M0
+      procedimiento: NEFROURETERECTOMIA_LAP
+
+  - id: ureter_002
+    pathology: ureter
+    lang: en
+    transcript: >
+      Multifocal low-grade urothelial carcinoma of the upper tract, managed with
+      ureteroscopy and ablation. Associated carcinoma in situ present.
+    expected:
+      localizacion: MULTIFOCAL
+      grado: BAJO_GRADO
+      cis_asociado: true
+      procedimiento: URETEROSCOPIA_ABLACION
+
+  - id: ureter_003
+    pathology: ureter
+    lang: es
+    transcript: >
+      Urotomografía con hidronefrosis. Recurrencia vesical en seguimiento.
+      Pelvis renal derecha, C65.
+    expected:
+      cie10_subcodigo: C65
+      lateralidad: DERECHO
+      localizacion: PELVIS_RENAL
+      tac_uro: HIDRONEFROSIS
+      estado_actual: RECURRENCIA_VESICAL
+
+  # ---------------- ADRENAL ----------------
+  - id: adrenal_001
+    pathology: adrenal
+    lang: es
+    transcript: >
+      Masa suprarrenal izquierda de seis centímetros, carcinoma corticosuprarrenal,
+      Ki-67 de quince por ciento, síndrome de Cushing presente.
+      Adrenalectomía abierta.
+    expected:
+      lateralidad: IZQUIERDO
+      tamano: 6
+      histologia: CARCINOMA_CORTICOSUPRARRENAL
+      ki67: 15
+      sindrome_cushing: true
+      procedimiento: ADRENALECTOMIA_ABIERTA
+    must_be_null: [tnm_t]
+
+  - id: adrenal_002
+    pathology: adrenal
+    lang: en
+    transcript: >
+      Malignant pheochromocytoma, treated with mitotane. PET-CT shows distant positive findings.
+    expected:
+      histologia: FEOCROMOCITOMA_MALIGNO
+      procedimiento: MITOTANO
+      pet_ct: POSITIVO_DISTANCIA
+
+  - id: adrenal_003
+    pathology: adrenal
+    lang: es
+    transcript: >
+      Neuroblastoma suprarrenal derecho, Ki-67 cuarenta por ciento, sin síndrome de Cushing.
+      TAC tórax abdomen con metástasis hepáticas. En tratamiento.
+    expected:
+      lateralidad: DERECHO
+      histologia: NEUROBLASTOMA
+      ki67: 40
+      sindrome_cushing: false
+      tac_torax_abdomen: MET_HEPATICAS
+      estado_actual: EN_TRATAMIENTO
+
+  # ---------------- ESCROTO ----------------
+  - id: escroto_001
+    pathology: escroto
+    lang: es
+    transcript: >
+      Carcinoma escamocelular de escroto bien diferenciado, limitado a escroto,
+      T1 N0 M0. Escisión local amplia.
+    expected:
+      histologia: ESCAMOCELULAR
+      grado: G1
+      extension_local: LIMITADO_ESCROTO
+      tnm_t: T1
+      tnm_n: N0
+      tnm_m: M0
+      procedimiento: ESCISION_LOCAL_AMPLIA
+
+  - id: escroto_002
+    pathology: escroto
+    lang: en
+    transcript: >
+      Extramammary Paget disease of the scrotum. CT shows inguinal adenopathy only.
+    expected:
+      histologia: ENFERMEDAD_PAGET
+      tac_abdomen_pelvis: ADENOPATIAS_INGUINALES
+
+  # ---------------- URETRA ----------------
+  - id: uretra_001
+    pathology: uretra
+    lang: es
+    transcript: >
+      Carcinoma urotelial de uretra anterior o distal, T1. Resección transuretral realizada.
+    expected:
+      localizacion: ANTERIOR_DISTAL
+      histologia: CARCINOMA_UROTELIAL
+      tnm_t: T1
+      procedimiento: RESECCION_TRANSURETRAL
+
+  - id: uretra_002
+    pathology: uretra
+    lang: en
+    transcript: >
+      Squamous cell carcinoma of the entire urethra, managed with chemoradiotherapy.
+      Pelvic MRI with local involvement.
+    expected:
+      localizacion: TODA_LA_URETRA
+      histologia: ESCAMOCELULAR
+      procedimiento: QUIMIORRADIOTERAPIA
+      tac_rmn_pelvis: COMPROMISO_LOCAL
