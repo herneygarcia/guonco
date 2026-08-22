@@ -186,10 +186,10 @@ def counts_by_status() -> dict[str, Any]:
                 f"SELECT COUNT(*) c FROM {key} WHERE _sync_status='synced'"
             ).fetchone()
             synced += row["c"]
-            row = conn.execute(
-                f"SELECT MAX(_updated_at) m FROM {key}"
-            ).fetchone()
-            last = max(last, row["m"] or "") if last or row["m"] else row["m"]
+            row = conn.execute(f"SELECT MAX(_updated_at) m FROM {key}").fetchone()
+            m = row["m"]
+            if m and (last is None or m > last):
+                last = m
         return {"pending": pending, "synced": synced, "last_sync_at": last}
     finally:
         conn.close()
