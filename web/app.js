@@ -132,7 +132,9 @@ function renderField(field) {
       for (const o of field.options || []) {
         const opt = document.createElement("option");
         opt.value = o.code;
-        opt.textContent = o.es === o.en ? o.es : `${o.es} · ${o.en}`;
+        const es = o.es ?? o.code; // code-only options (TNM etc.) render as the code
+        const en = o.en ?? o.code;
+        opt.textContent = es === en ? es : `${es} · ${en}`;
         sel.appendChild(opt);
       }
       control.appendChild(sel);
