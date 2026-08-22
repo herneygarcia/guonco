@@ -74,7 +74,10 @@ def main() -> int:
 
     load_env()
     if not groq_api_key():
-        print("ERROR: GROQ_API_KEY not set. Copy .env.example to .env and add your key.")
+        print(
+            "ERROR: GROQ_API_KEY not set. "
+            "Copy .env.example to .env and add your key."
+        )
         return 2
 
     cases = load_cases(ROOT / "harness" / "golden_cases.yaml")
@@ -96,7 +99,8 @@ def main() -> int:
             wrong += not ok
             case_oks.append(ok)
             if not ok:
-                failures.append((f"{case['id']}:{label}", {"expected": exp, "got": act}))
+                detail = {"expected": exp, "got": act}
+                failures.append((f"{case['id']}:{label}", detail))
                 if args.verbose:
                     print(f"  MISS {case['id']}:{label} expected={exp!r} got={act!r}")
         status = "OK " if all(case_oks) else "FAIL"

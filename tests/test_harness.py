@@ -25,8 +25,9 @@ def test_exact_codes_required():
 
 def test_boolean_scoring():
     case = {"expected": {"invasion_muscular": True}}
-    assert score_case(case, {"invasion_muscular": 1})["results"]["invasion_muscular"][2]
-    assert not score_case(case, {"invasion_muscular": 0})["results"]["invasion_muscular"][2]
+    ok = score_case(case, {"invasion_muscular": 1})["results"]["invasion_muscular"][2]
+    bad = score_case(case, {"invasion_muscular": 0})["results"]["invasion_muscular"][2]
+    assert ok and not bad
 
 
 def test_hallucination_detection():
@@ -46,7 +47,8 @@ def test_all_golden_cases_are_wellformed():
 
     from src import schema
 
-    path = pathlib.Path(__file__).resolve().parent.parent / "harness" / "golden_cases.yaml"
+    root = pathlib.Path(__file__).resolve().parent.parent
+    path = root / "harness" / "golden_cases.yaml"
     cases = yaml.safe_load(path.read_text(encoding="utf-8"))["cases"]
     assert len(cases) >= 30
     seen = set()

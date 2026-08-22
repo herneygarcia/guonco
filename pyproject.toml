@@ -1,0 +1,13 @@
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+extend-exclude = ["src/schema.py"]  # GENERATED artifact
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "SIM", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+# FastAPI's documented dependency-injection style uses calls in defaults
+"src/main.py" = ["B008"]
+# sys.path bootstrap must precede project imports
+"harness/run_eval.py" = ["E402"]

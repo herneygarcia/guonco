@@ -126,7 +126,9 @@ def validate_fields(pathology_key: str, fields: dict[str, Any]) -> dict[str, Any
     fmap = field_map(pathology_key)
     unknown = set(fields) - set(fmap)
     if unknown:
-        raise ValidationFailure({u: "unknown field for this pathology" for u in unknown})
+        raise ValidationFailure(
+            {u: "unknown field for this pathology" for u in unknown}
+        )
     model = record_model(pathology_key)
     try:
         validated = model(**fields)
@@ -134,7 +136,11 @@ def validate_fields(pathology_key: str, fields: dict[str, Any]) -> dict[str, Any
         errors: dict[str, str] = {}
         for err in exc.errors():
             ctx = err.get("ctx", {}).get("error")
-            if isinstance(ctx, ValueError) and ctx.args and isinstance(ctx.args[0], dict):
+            if (
+                isinstance(ctx, ValueError)
+                and ctx.args
+                and isinstance(ctx.args[0], dict)
+            ):
                 errors.update(ctx.args[0])
                 continue
             loc = err["loc"][0] if err["loc"] else "_"

@@ -70,7 +70,7 @@ def render() -> str:
         "META = " + repr(meta),
         "",
         "# key -> {nombre_es, nombre_en, cie10, color, fields}",
-        "# Each field: {id, code, type, required, label_es, label_en[, unit][, options]}",
+        "# field: {id, code, type, required, label_es, label_en[, unit][, options]}",
         "PATHOLOGIES = " + repr(merged),
         "",
         "# key -> CREATE TABLE statement",
@@ -83,9 +83,12 @@ def render() -> str:
 def main() -> None:
     src = render()
     OUT_PATH.write_text(src, encoding="utf-8")
-    n = sum(len(p["fields"]) for p in yaml.safe_load(DICT_PATH.read_text()) ["pathologies"].values())
-    print(f"wrote {OUT_PATH.relative_to(ROOT)} ({n} pathology-specific + "
-          f"{len(yaml.safe_load(DICT_PATH.read_text())['common_fields'])} common fields)")
+    raw = yaml.safe_load(DICT_PATH.read_text())
+    n = sum(len(p["fields"]) for p in raw["pathologies"].values())
+    print(
+        f"wrote {OUT_PATH.relative_to(ROOT)} ({n} pathology-specific + "
+        f"{len(raw['common_fields'])} common fields)"
+    )
 
 
 if __name__ == "__main__":

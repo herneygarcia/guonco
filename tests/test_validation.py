@@ -41,9 +41,12 @@ def test_unknown_field_rejected():
 
 
 def test_boolean_coercion():
-    assert validate_fields("vejiga", {"invasion_muscular": True})["invasion_muscular"] == 1
-    assert validate_fields("vejiga", {"invasion_muscular": "no"})["invasion_muscular"] == 0
-    assert validate_fields("vejiga", {"invasion_muscular": "sí"})["invasion_muscular"] == 1
+    ok = validate_fields("vejiga", {"invasion_muscular": True})
+    no = validate_fields("vejiga", {"invasion_muscular": "no"})
+    si = validate_fields("vejiga", {"invasion_muscular": "sí"})
+    assert ok["invasion_muscular"] == 1
+    assert no["invasion_muscular"] == 0
+    assert si["invasion_muscular"] == 1
     with pytest.raises(ValidationFailure):
         validate_fields("vejiga", {"invasion_muscular": "tal vez"})
 
