@@ -308,7 +308,6 @@ cases:
       Carcinoma urotelial de alto grado de uréter distal izquierdo, C66.
       T3 N0 M0. Nefroureterectomía radical laparoscópica.
     expected:
-      cie10_subcodigo: C66
       localizacion: URETER_DISTAL
       lateralidad: IZQUIERDO
       histologia: CARCINOMA_UROTELIAL
@@ -337,7 +336,6 @@ cases:
       Urotomografía con hidronefrosis. Recurrencia vesical en seguimiento.
       Pelvis renal derecha, C65.
     expected:
-      cie10_subcodigo: C65
       lateralidad: DERECHO
       localizacion: PELVIS_RENAL
       tac_uro: HIDRONEFROSIS

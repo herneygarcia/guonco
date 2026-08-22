@@ -394,25 +394,6 @@ pathologies:
     cie10: C67
     color: "#8e44ad"
     fields:
-      - id: cie10_subcodigo
-        group: diagnostico
-        code: ICD10_SUB
-        type: select
-        required: false
-        default: C67.9
-        label_es: "Código CIE-10"
-        label_en: "ICD-10 code"
-        options:
-          - {code: C67.0, es: "C67.0", en: "C67.0"}
-          - {code: C67.1, es: "C67.1", en: "C67.1"}
-          - {code: C67.2, es: "C67.2", en: "C67.2"}
-          - {code: C67.3, es: "C67.3", en: "C67.3"}
-          - {code: C67.4, es: "C67.4", en: "C67.4"}
-          - {code: C67.5, es: "C67.5", en: "C67.5"}
-          - {code: C67.6, es: "C67.6", en: "C67.6"}
-          - {code: C67.7, es: "C67.7", en: "C67.7"}
-          - {code: C67.8, es: "C67.8", en: "C67.8"}
-          - {code: C67.9, es: "C67.9", en: "C67.9"}
       - *fecha_diagnostico
       - id: histologia
         group: diagnostico
@@ -742,18 +723,6 @@ pathologies:
     cie10: C62
     color: "#d35400"
     fields:
-      - id: cie10_subcodigo
-        group: diagnostico
-        code: ICD10_SUB
-        type: select
-        required: false
-        default: C62.9
-        label_es: "Código CIE-10"
-        label_en: "ICD-10 code"
-        options:
-          - {code: C62.0, es: "C62.0", en: "C62.0"}
-          - {code: C62.1, es: "C62.1", en: "C62.1"}
-          - {code: C62.9, es: "C62.9", en: "C62.9"}
       - id: lateralidad
         group: diagnostico
         code: LATERALITY
@@ -928,20 +897,6 @@ pathologies:
     cie10: C60
     color: "#c0392b"
     fields:
-      - id: cie10_subcodigo
-        group: diagnostico
-        code: ICD10_SUB
-        type: select
-        required: false
-        default: C60.2
-        label_es: "Código CIE-10"
-        label_en: "ICD-10 code"
-        options:
-          - {code: C60.0, es: "C60.0", en: "C60.0"}
-          - {code: C60.1, es: "C60.1", en: "C60.1"}
-          - {code: C60.2, es: "C60.2", en: "C60.2"}
-          - {code: C60.8, es: "C60.8", en: "C60.8"}
-          - {code: C60.9, es: "C60.9", en: "C60.9"}
       - *fecha_diagnostico
       - id: histologia
         group: diagnostico
@@ -1046,17 +1001,6 @@ pathologies:
     cie10: C65-C66
     color: "#16a085"
     fields:
-      - id: cie10_subcodigo
-        group: diagnostico
-        code: ICD10_SUB
-        type: select
-        required: false
-        default: C65
-        label_es: "Código CIE-10"
-        label_en: "ICD-10 code"
-        options:
-          - {code: C65, es: "C65 — Pelvis renal", en: "C65 — Renal pelvis"}
-          - {code: C66, es: "C66 — Uréter",       en: "C66 — Ureter"}
       - id: localizacion
         group: diagnostico
         code: LOCATION
@@ -1179,18 +1123,6 @@ pathologies:
     cie10: C74
     color: "#6c3483"
     fields:
-      - id: cie10_subcodigo
-        group: diagnostico
-        code: ICD10_SUB
-        type: select
-        required: false
-        default: C74.9
-        label_es: "Código CIE-10"
-        label_en: "ICD-10 code"
-        options:
-          - {code: C74.0, es: "C74.0 — Corteza suprarrenal", en: "C74.0 — Adrenal cortex"}
-          - {code: C74.1, es: "C74.1 — Médula suprarrenal",  en: "C74.1 — Adrenal medulla"}
-          - {code: C74.9, es: "C74.9 — NE",                  en: "C74.9 — Unspecified"}
       - *lateralidad
       - *tamano
       - *fecha_diagnostico
@@ -1313,14 +1245,6 @@ pathologies:
     cie10: C63.2
     color: "#784212"
     fields:
-      - id: cie10_subcodigo
-        group: diagnostico
-        code: ICD10_SUB
-        type: text
-        required: false
-        default: C63.2
-        label_es: "Código CIE-10"
-        label_en: "ICD-10 code"
       - *fecha_diagnostico
       - id: histologia
         group: diagnostico
@@ -1437,14 +1361,6 @@ pathologies:
     cie10: C68.0
     color: "#1a5276"
     fields:
-      - id: cie10_subcodigo
-        group: diagnostico
-        code: ICD10_SUB
-        type: text
-        required: false
-        default: C68.0
-        label_es: "Código CIE-10"
-        label_en: "ICD-10 code"
       - id: localizacion
         group: diagnostico
         code: LOCATION

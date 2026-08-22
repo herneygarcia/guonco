@@ -61,7 +61,7 @@ function renderChips() {
     btn.className = "chip";
     btn.dataset.key = p.key;
     btn.style.setProperty("--chip-color", p.color);
-    btn.innerHTML = `<span class="swatch"></span>${p.nombre_es} <span class="cie">${p.cie10}</span>`;
+    btn.innerHTML = `<span class="swatch"></span>${p.nombre_es} · ${p.nombre_en} <span class="cie">${p.cie10}</span>`;
     btn.addEventListener("click", () => selectPathology(p.key));
     nav.appendChild(btn);
   }

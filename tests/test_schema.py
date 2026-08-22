@@ -62,6 +62,22 @@ def test_select_options_have_codes_and_bilingual_labels():
             )
 
 
+def test_tnm_present_in_every_pathology():
+    # Every tumor must carry T/N/M; testicular also carries the S category.
+    for key, spec in schema.PATHOLOGIES.items():
+        ids = {f["id"] for f in spec["fields"]}
+        for stage in ("tnm_t", "tnm_n", "tnm_m"):
+            assert stage in ids, f"{key} missing {stage}"
+        assert ("tnm_s" in ids) == (key == "testiculo"), key
+
+
+def test_no_cie10_subcode_field():
+    # CIE-10 is fixed per pathology (meta) — not a collectable variable.
+    for key, spec in schema.PATHOLOGIES.items():
+        ids = {f["id"] for f in spec["fields"]}
+        assert "cie10_subcodigo" not in ids, key
+
+
 def test_labels_are_bilingual_everywhere():
     for key, spec in schema.PATHOLOGIES.items():
         for f in spec["fields"]:
