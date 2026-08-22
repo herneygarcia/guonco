@@ -1,0 +1,17 @@
+{
+  "name": "GuOnco — Registro GU Onco",
+  "short_name": "GuOnco",
+  "description": "Voice-driven genitourinary oncology patient registry",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafaf7",
+  "theme_color": "#1b1e20",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
