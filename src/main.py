@@ -67,7 +67,7 @@ def pathologies() -> dict:
 def pathology_fields(key: str) -> dict:
     if key not in schema.PATHOLOGIES:
         raise HTTPException(404, f"unknown pathology '{key}'")
-    return schema.PATHOLOGIES[key]
+    return {"key": key, **schema.PATHOLOGIES[key]}
 
 
 # ------------------------------------------------------- voice/extract ------

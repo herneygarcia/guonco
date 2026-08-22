@@ -25,7 +25,15 @@ async function api(path, opts) {
     ...opts,
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw Object.assign(new Error(data.error || res.statusText), { detail: data.detail });
+  if (!res.ok) {
+    const detail = data.detail;
+    const msg =
+      data.error ||
+      (typeof detail === "string" ? detail : null) ||
+      (detail?.errors ? `invalid: ${Object.keys(detail.errors).join(", ")}` : null) ||
+      `${res.status} ${res.statusText}`;
+    throw Object.assign(new Error(msg), { detail });
+  }
   return data;
 }
 
@@ -51,6 +59,7 @@ function renderChips() {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "chip";
+    btn.dataset.key = p.key;
     btn.style.setProperty("--chip-color", p.color);
     btn.innerHTML = `<span class="swatch"></span>${p.nombre_es} <span class="cie">${p.cie10}</span>`;
     btn.addEventListener("click", () => selectPathology(p.key));
@@ -59,12 +68,11 @@ function renderChips() {
 }
 
 async function selectPathology(key) {
-  state.active = await api(`/api/pathologies/${key}/fields`);
+  const spec = await api(`/api/pathologies/${key}/fields`);
+  state.active = { ...spec, key };
   document.documentElement.style.setProperty("--accent", state.active.color);
   for (const chip of $("#chips").children) {
-    const isSame = chip.querySelector(".cie")?.textContent === state.active.cie10
-      && chip.textContent.includes(state.active.nombre_es);
-    chip.classList.toggle("active", isSame);
+    chip.classList.toggle("active", chip.dataset.key === key);
   }
   $("#empty-state").hidden = true;
   $("#dictation").hidden = false;
