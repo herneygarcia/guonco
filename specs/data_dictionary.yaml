@@ -33,6 +33,7 @@ meta:
 common_fields:
 
   - id: historia_clinica
+    group: paciente
     code: MRN
     type: text
     required: true
@@ -40,6 +41,7 @@ common_fields:
     label_en: "ID / Medical record"
 
   - id: nombre
+    group: paciente
     code: NAME
     type: text
     required: false
@@ -47,6 +49,7 @@ common_fields:
     label_en: "Full name"
 
   - id: fecha_nacimiento
+    group: paciente
     code: DOB
     type: date
     required: false
@@ -54,6 +57,7 @@ common_fields:
     label_en: "Date of birth"
 
   - id: edad
+    group: paciente
     code: AGE_DX
     type: number
     unit: years
@@ -62,6 +66,7 @@ common_fields:
     label_en: "Age at diagnosis"
 
   - id: sexo
+    group: paciente
     code: SEX
     type: select
     required: false
@@ -72,6 +77,7 @@ common_fields:
       - {code: FEMENINO,  es: "Femenino",  en: "Female"}
 
   - id: institucion
+    group: paciente
     code: INSTITUTION
     type: text
     required: false
@@ -79,6 +85,7 @@ common_fields:
     label_en: "Institution"
 
   - id: medico
+    group: paciente
     code: PHYSICIAN
     type: text
     required: false
@@ -86,6 +93,7 @@ common_fields:
     label_en: "Treating physician"
 
   - id: fecha_registro
+    group: paciente
     code: REG_DATE
     type: date
     auto: today            # prefilled by app, editable
@@ -95,6 +103,7 @@ common_fields:
 
   # ---- Approved addition #1: universal performance status -------------------
   - id: ecog
+    group: paciente
     code: ECOG_PS
     type: select
     required: false
@@ -110,6 +119,7 @@ common_fields:
 
   # ---- Approved addition #2: smoking status ----------------------------------
   - id: tabaquismo
+    group: paciente
     code: SMOKING
     type: select
     required: false
@@ -189,6 +199,7 @@ pathologies:
     fields:
       - *fecha_diagnostico
       - id: psa_diagnostico
+        group: diagnostico
         code: PSA_DX
         type: number
         unit: ng/mL
@@ -196,6 +207,7 @@ pathologies:
         label_es: "PSA al diagnóstico (ng/mL)"
         label_en: "PSA at diagnosis (ng/mL)"
       - id: histologia
+        group: diagnostico
         code: HISTOLOGY
         type: select
         required: false
@@ -207,6 +219,7 @@ pathologies:
           - {code: NEUROENDOCRINO,   es: "Neuroendocrino",        en: "Neuroendocrine"}
           - {code: OTRO,             es: "Otro",                  en: "Other"}
       - id: gleason
+        group: diagnostico
         code: GLEASON
         type: select
         required: false
@@ -221,6 +234,7 @@ pathologies:
           - {code: "9_5+4", es: "9 (5+4)", en: "9 (5+4)"}
           - {code: "10_5+5", es: "10 (5+5)", en: "10 (5+5)"}
       - id: isup
+        group: diagnostico
         code: ISUP_GRADE
         type: select
         required: false
@@ -233,6 +247,7 @@ pathologies:
           - {code: "4", es: "4", en: "4"}
           - {code: "5", es: "5", en: "5"}
       - id: tnm_t
+        group: diagnostico
         code: T_STAGE
         type: select
         required: false
@@ -241,6 +256,7 @@ pathologies:
         options: [{code: T1a}, {code: T1b}, {code: T1c}, {code: T2a}, {code: T2b},
                   {code: T2c}, {code: T3a}, {code: T3b}, {code: T4}, {code: Tx}]
       - id: tnm_n
+        group: diagnostico
         code: N_STAGE
         type: select
         required: false
@@ -248,6 +264,7 @@ pathologies:
         label_en: "N stage (TNM)"
         options: [{code: N0}, {code: N1}, {code: Nx}]
       - id: tnm_m
+        group: diagnostico
         code: M_STAGE
         type: select
         required: false
@@ -255,6 +272,7 @@ pathologies:
         label_en: "M stage (TNM)"
         options: [{code: M0}, {code: M1a}, {code: M1b}, {code: M1c}, {code: Mx}]
       - id: procedimiento
+        group: tratamiento
         code: PROCEDURE
         type: select
         required: false
@@ -272,6 +290,7 @@ pathologies:
           - {code: OTRO,                es: "Otro",                            en: "Other"}
       - *fecha_procedimiento
       - id: margenes
+        group: diagnostico
         code: SURGICAL_MARGINS
         type: select
         required: false
@@ -283,6 +302,7 @@ pathologies:
           - {code: POSITIVOS_EXTENSOS,  es: "Positivos extensos",     en: "Extensively positive"}
           - {code: NO_APLICA,           es: "No aplica",              en: "Not applicable"}
       - id: extension_extraprost
+        group: diagnostico
         code: EXTRAPROSTATIC_EXT
         type: select
         required: false
@@ -293,6 +313,7 @@ pathologies:
           - {code: "SI",        es: "Sí",        en: "Yes"}
           - {code: NO_APLICA, es: "No aplica", en: "Not applicable"}
       - id: invasion_vs
+        group: diagnostico
         code: SV_INVASION
         type: select
         required: false
@@ -303,6 +324,7 @@ pathologies:
           - {code: "SI",        es: "Sí",        en: "Yes"}
           - {code: NO_APLICA, es: "No aplica", en: "Not applicable"}
       - id: psa_post
+        group: seguimiento
         code: PSA_POSTOP
         type: number
         unit: ng/mL
@@ -310,6 +332,7 @@ pathologies:
         label_es: "PSA postoperatorio (ng/mL)"
         label_en: "Postoperative PSA (ng/mL)"
       - id: gammagrafia
+        group: diagnostico
         code: BONE_SCAN
         type: select
         required: false
@@ -321,6 +344,7 @@ pathologies:
           - {code: LESIONES_SOSP,       es: "Lesiones sospechosas",    en: "Suspicious lesions"}
           - {code: METASTASIS_OSEAS,    es: "Metástasis óseas",        en: "Bone metastases"}
       - id: psma_pet
+        group: diagnostico
         code: PSMA_PET
         type: select
         required: false
@@ -333,6 +357,7 @@ pathologies:
           - {code: POSITIVO_GANGLIONAR, es: "Positivo ganglionar",      en: "Nodally positive"}
           - {code: POSITIVO_DISTANCIA,  es: "Positivo a distancia",     en: "Distant positive"}
       - id: estado_actual
+        group: seguimiento
         code: CURRENT_STATUS
         type: select
         required: false
@@ -346,6 +371,7 @@ pathologies:
           - {code: RESISTENTE_CASTRACION, es: "Resistente a castración", en: "Castration-resistant"}
           - {code: FALLECIDO,           es: "Fallecido",                 en: "Deceased"}
       - id: psa_seguimiento
+        group: seguimiento
         code: PSA_FU
         type: number
         unit: ng/mL
@@ -363,6 +389,7 @@ pathologies:
     color: "#8e44ad"
     fields:
       - id: cie10_subcodigo
+        group: diagnostico
         code: ICD10_SUB
         type: select
         required: false
@@ -382,6 +409,7 @@ pathologies:
           - {code: C67.9, es: "C67.9", en: "C67.9"}
       - *fecha_diagnostico
       - id: histologia
+        group: diagnostico
         code: HISTOLOGY
         type: select
         required: false
@@ -394,6 +422,7 @@ pathologies:
           - {code: CELULAS_PEQUENAS,    es: "Carcinoma de células pequeñas", en: "Small cell carcinoma"}
           - {code: OTRO,                es: "Otro",                         en: "Other"}
       - id: grado_who
+        group: diagnostico
         code: WHO_GRADE
         type: select
         required: false
@@ -403,6 +432,7 @@ pathologies:
           - {code: BAJO_GRADO, es: "Bajo grado", en: "Low grade"}
           - {code: ALTO_GRADO, es: "Alto grado", en: "High grade"}
       - id: invasion_muscular
+        group: diagnostico
         code: MIBC
         type: boolean
         required: false
@@ -410,12 +440,14 @@ pathologies:
         label_en: "Muscle invasion (MIBC)"
       # ---- Approved addition #3: CIS recording (ENCR/COSD urothelial std) ----
       - id: cis_asociado
+        group: diagnostico
         code: ASSOCIATED_CIS
         type: boolean
         required: false
         label_es: "Carcinoma in situ asociado"
         label_en: "Associated carcinoma in situ"
       - id: tnm_t
+        group: diagnostico
         code: T_STAGE
         type: select
         required: false
@@ -424,6 +456,7 @@ pathologies:
         options: [{code: Ta}, {code: Tis}, {code: T1}, {code: T2a}, {code: T2b},
                   {code: T3a}, {code: T3b}, {code: T4a}, {code: T4b}, {code: Tx}]
       - id: tnm_n
+        group: diagnostico
         code: N_STAGE
         type: select
         required: false
@@ -431,6 +464,7 @@ pathologies:
         label_en: "N stage (TNM)"
         options: [{code: N0}, {code: N1}, {code: N2}, {code: N3}, {code: Nx}]
       - id: tnm_m
+        group: diagnostico
         code: M_STAGE
         type: select
         required: false
@@ -438,6 +472,7 @@ pathologies:
         label_en: "M stage (TNM)"
         options: [{code: M0}, {code: M1a}, {code: M1b}, {code: Mx}]
       - id: procedimiento
+        group: tratamiento
         code: PROCEDURE
         type: select
         required: false
@@ -454,6 +489,7 @@ pathologies:
           - {code: OTRO,                es: "Otro",                       en: "Other"}
       - *fecha_procedimiento
       - id: derivacion
+        group: tratamiento
         code: URINARY_DIVERSION
         type: select
         required: false
@@ -465,18 +501,21 @@ pathologies:
           - {code: NEOVEJIGA_ORTOTOPICA,  es: "Neovejiga ortotópica",    en: "Orthotopic neobladder"}
           - {code: URETEROSTOMIA_CUTANEA, es: "Ureterostomía cutánea",   en: "Cutaneous ureterostomy"}
       - id: recurrencia_previa
+        group: seguimiento
         code: PRIOR_RECURRENCE
         type: boolean
         required: false
         label_es: "Recurrencia previa"
         label_en: "Prior recurrence"
       - id: num_recurrencias
+        group: seguimiento
         code: RECURRENCE_COUNT
         type: number
         required: false
         label_es: "Número de recurrencias"
         label_en: "Number of recurrences"
       - id: tac_torax_abdomen
+        group: diagnostico
         code: CT_TAP
         type: select
         required: false
@@ -490,6 +529,7 @@ pathologies:
           - {code: HIDRONEFROSIS,    es: "Hidronefrosis",    en: "Hydronephrosis"}
           - {code: OTRO,             es: "Otro",             en: "Other"}
       - id: cistoscopia_seguimiento
+        group: seguimiento
         code: FU_CYSTOSCOPY
         type: select
         required: false
@@ -502,6 +542,7 @@ pathologies:
           - {code: RECURRENCIA_T1,   es: "Recurrencia T1",     en: "T1 recurrence"}
           - {code: RECURRENCIA_T2,   es: "Recurrencia T2+",    en: "T2+ recurrence"}
       - id: estado_actual
+        group: seguimiento
         code: CURRENT_STATUS
         type: select
         required: false
@@ -527,6 +568,7 @@ pathologies:
       - *tamano
       # ---- Approved addition #4: presentation mode (renal registry item) -----
       - id: forma_presentacion
+        group: diagnostico
         code: PRESENTATION
         type: select
         required: false
@@ -537,6 +579,7 @@ pathologies:
           - {code: SINTOMATICO, es: "Sintomático", en: "Symptomatic"}
       - *fecha_diagnostico
       - id: histologia
+        group: diagnostico
         code: HISTOLOGY
         type: select
         required: false
@@ -552,6 +595,7 @@ pathologies:
           - {code: TRANSLOCACION_XP11, es: "Translocación Xp11",        en: "Xp11 translocation"}
           - {code: OTRO,               es: "Otro",                      en: "Other"}
       - id: grado_isup
+        group: diagnostico
         code: ISUP_GRADE
         type: select
         required: false
@@ -559,6 +603,7 @@ pathologies:
         label_en: "ISUP/Fuhrman grade"
         options: [{code: G1}, {code: G2}, {code: G3}, {code: G4}]
       - id: tnm_t
+        group: diagnostico
         code: T_STAGE
         type: select
         required: false
@@ -567,6 +612,7 @@ pathologies:
         options: [{code: T1a}, {code: T1b}, {code: T2a}, {code: T2b}, {code: T3a},
                   {code: T3b}, {code: T3c}, {code: T4}, {code: Tx}]
       - id: tnm_n
+        group: diagnostico
         code: N_STAGE
         type: select
         required: false
@@ -574,6 +620,7 @@ pathologies:
         label_en: "N stage (TNM)"
         options: [{code: N0}, {code: N1}, {code: Nx}]
       - id: tnm_m
+        group: diagnostico
         code: M_STAGE
         type: select
         required: false
@@ -581,6 +628,7 @@ pathologies:
         label_en: "M stage (TNM)"
         options: [{code: M0}, {code: M1}, {code: Mx}]
       - id: imdc
+        group: diagnostico
         code: IMDC_RISK
         type: select
         required: false
@@ -592,6 +640,7 @@ pathologies:
           - {code: POBRE,      es: "Pobre",      en: "Poor"}
           - {code: NO_APLICA,  es: "No aplica",  en: "Not applicable"}
       - id: procedimiento
+        group: tratamiento
         code: PROCEDURE
         type: select
         required: false
@@ -609,6 +658,7 @@ pathologies:
           - {code: OTRO,              es: "Otro",                               en: "Other"}
       - *fecha_procedimiento
       - id: trombosis_venosa
+        group: diagnostico
         code: VENOUS_THROMBUS
         type: select
         required: false
@@ -621,6 +671,7 @@ pathologies:
           - {code: VCI_SUPRAHEPATICA,  es: "VCI suprahepática",     en: "IVC suprahepatic"}
           - {code: AURICULA_DERECHA,   es: "Aurícula derecha",      en: "Right atrium"}
       - id: tac_torax
+        group: diagnostico
         code: CT_CHEST
         type: select
         required: false
@@ -633,6 +684,7 @@ pathologies:
           - {code: ADENOPATIAS,        es: "Adenopatías",             en: "Adenopathy"}
           - {code: OTRO,               es: "Otro",                    en: "Other"}
       - id: tac_abdomen
+        group: diagnostico
         code: CT_ABDOMEN
         type: select
         required: false
@@ -646,6 +698,7 @@ pathologies:
           - {code: ADENOPATIAS,        es: "Adenopatías",             en: "Adenopathy"}
           - {code: OTRO,               es: "Otro",                    en: "Other"}
       - id: terapia_sistemica
+        group: tratamiento
         code: SYSTEMIC_1L
         type: select
         required: false
@@ -661,6 +714,7 @@ pathologies:
           - {code: NIVO_CABOZANTINIB,    es: "Nivolumab+Cabozantinib",       en: "Nivolumab+Cabozantinib"}
           - {code: OTRO,                 es: "Otro",                         en: "Other"}
       - id: estado_actual
+        group: seguimiento
         code: CURRENT_STATUS
         type: select
         required: false
@@ -683,6 +737,7 @@ pathologies:
     color: "#d35400"
     fields:
       - id: cie10_subcodigo
+        group: diagnostico
         code: ICD10_SUB
         type: select
         required: false
@@ -694,6 +749,7 @@ pathologies:
           - {code: C62.1, es: "C62.1", en: "C62.1"}
           - {code: C62.9, es: "C62.9", en: "C62.9"}
       - id: lateralidad
+        group: diagnostico
         code: LATERALITY
         type: select
         required: false
@@ -703,6 +759,7 @@ pathologies:
           - {code: DERECHO,   es: "Derecho",   en: "Right"}
           - {code: IZQUIERDO, es: "Izquierdo", en: "Left"}
       - id: histologia
+        group: diagnostico
         code: HISTOLOGY
         type: select
         required: false
@@ -718,6 +775,7 @@ pathologies:
           - {code: CORIOCARCINOMA,         es: "Coriocarcinoma",                    en: "Choriocarcinoma"}
           - {code: TUMOR_MIXTO_GERMINAL,   es: "Tumor mixto de células germinales", en: "Mixed germ cell tumor"}
       - id: tipo_tumor
+        group: diagnostico
         code: TUMOR_TYPE
         type: select
         required: false
@@ -729,6 +787,7 @@ pathologies:
           - {code: MIXTO,         es: "Mixto",         en: "Mixed"}
       - *fecha_diagnostico
       - id: afp
+        group: diagnostico
         code: AFP_DX
         type: number
         unit: ng/mL
@@ -736,6 +795,7 @@ pathologies:
         label_es: "AFP al diagnóstico (ng/mL)"
         label_en: "AFP at diagnosis (ng/mL)"
       - id: bhcg
+        group: diagnostico
         code: BHCG_DX
         type: number
         unit: mUI/mL
@@ -743,6 +803,7 @@ pathologies:
         label_es: "B-HCG al diagnóstico (mUI/mL)"
         label_en: "B-HCG at diagnosis (mUI/mL)"
       - id: ldh
+        group: diagnostico
         code: LDH_DX
         type: number
         unit: U/L
@@ -750,6 +811,7 @@ pathologies:
         label_es: "LDH al diagnóstico (U/L)"
         label_en: "LDH at diagnosis (U/L)"
       - id: tnm_t
+        group: diagnostico
         code: T_STAGE
         type: select
         required: false
@@ -757,6 +819,7 @@ pathologies:
         label_en: "pT stage (TNM)"
         options: [{code: pT1a}, {code: pT1b}, {code: pT2}, {code: pT3}, {code: pT4}, {code: Tx}]
       - id: tnm_n
+        group: diagnostico
         code: N_STAGE
         type: select
         required: false
@@ -764,6 +827,7 @@ pathologies:
         label_en: "N stage (TNM)"
         options: [{code: N0}, {code: N1}, {code: N2}, {code: N3}, {code: Nx}]
       - id: tnm_m
+        group: diagnostico
         code: M_STAGE
         type: select
         required: false
@@ -771,6 +835,7 @@ pathologies:
         label_en: "M stage (TNM)"
         options: [{code: M0}, {code: M1a}, {code: M1b}, {code: Mx}]
       - id: tnm_s
+        group: diagnostico
         code: S_CATEGORY
         type: select
         required: false
@@ -778,6 +843,7 @@ pathologies:
         label_en: "S category (markers)"
         options: [{code: S0}, {code: S1}, {code: S2}, {code: S3}, {code: Sx}]
       - id: estadio_igcccg
+        group: diagnostico
         code: IGCCCG_STAGE
         type: select
         required: false
@@ -786,6 +852,7 @@ pathologies:
         options: [{code: IA}, {code: IB}, {code: IS}, {code: IIA}, {code: IIB},
                   {code: IIC}, {code: IIIA}, {code: IIIB}, {code: IIIC}]
       - id: procedimiento
+        group: tratamiento
         code: PROCEDURE
         type: select
         required: false
@@ -803,6 +870,7 @@ pathologies:
           - {code: OTRO,                  es: "Otro",                            en: "Other"}
       - *fecha_procedimiento
       - id: afp_post
+        group: seguimiento
         code: AFP_POSTOP
         type: number
         unit: ng/mL
@@ -810,6 +878,7 @@ pathologies:
         label_es: "AFP postorquiectomía (ng/mL)"
         label_en: "Post-orchiectomy AFP (ng/mL)"
       - id: bhcg_post
+        group: seguimiento
         code: BHCG_POSTOP
         type: number
         unit: mUI/mL
@@ -817,6 +886,7 @@ pathologies:
         label_es: "B-HCG postorquiectomía (mUI/mL)"
         label_en: "Post-orchiectomy B-HCG (mUI/mL)"
       - id: tac_general
+        group: diagnostico
         code: CT_TAP
         type: select
         required: false
@@ -831,6 +901,7 @@ pathologies:
           - {code: MET_PULMONARES,      es: "Metástasis pulmonares",               en: "Pulmonary metastases"}
           - {code: OTRO,                es: "Otro",                                en: "Other"}
       - id: estado_actual
+        group: seguimiento
         code: CURRENT_STATUS
         type: select
         required: false
@@ -852,6 +923,7 @@ pathologies:
     color: "#c0392b"
     fields:
       - id: cie10_subcodigo
+        group: diagnostico
         code: ICD10_SUB
         type: select
         required: false
@@ -866,6 +938,7 @@ pathologies:
           - {code: C60.9, es: "C60.9", en: "C60.9"}
       - *fecha_diagnostico
       - id: histologia
+        group: diagnostico
         code: HISTOLOGY
         type: select
         required: false
@@ -878,6 +951,7 @@ pathologies:
           - {code: SARCOMATOIDE,  es: "Sarcomatoide",            en: "Sarcomatoid"}
           - {code: OTRO,          es: "Otro",                    en: "Other"}
       - id: grado
+        group: diagnostico
         code: GRADE
         type: select
         required: false
@@ -888,6 +962,7 @@ pathologies:
           - {code: G2, es: "G2 moderado",                 en: "G2 moderately differentiated"}
           - {code: G3, es: "G3 pobremente diferenciado",  en: "G3 poorly differentiated"}
       - id: tnm_t
+        group: diagnostico
         code: T_STAGE
         type: select
         required: false
@@ -895,6 +970,7 @@ pathologies:
         label_en: "T stage (TNM)"
         options: [{code: Tis}, {code: Ta}, {code: T1a}, {code: T1b}, {code: T2}, {code: T3}, {code: T4}, {code: Tx}]
       - id: tnm_n
+        group: diagnostico
         code: N_STAGE
         type: select
         required: false
@@ -902,6 +978,7 @@ pathologies:
         label_en: "N stage (TNM)"
         options: [{code: N0}, {code: N1}, {code: N2}, {code: N3}, {code: Nx}]
       - id: tnm_m
+        group: diagnostico
         code: M_STAGE
         type: select
         required: false
@@ -909,6 +986,7 @@ pathologies:
         label_en: "M stage (TNM)"
         options: [{code: M0}, {code: M1}, {code: Mx}]
       - id: procedimiento
+        group: tratamiento
         code: PROCEDURE
         type: select
         required: false
@@ -925,6 +1003,7 @@ pathologies:
           - {code: OTRO,                  es: "Otro",                                en: "Other"}
       - *fecha_procedimiento
       - id: estudios_extension
+        group: diagnostico
         code: STAGING_WORKUP
         type: select
         required: false
@@ -939,6 +1018,7 @@ pathologies:
           - {code: MET_DISTANCIA,      es: "Metástasis a distancia",    en: "Distant metastases"}
           - {code: OTRO,               es: "Otro",                      en: "Other"}
       - id: estado_actual
+        group: seguimiento
         code: CURRENT_STATUS
         type: select
         required: false
@@ -961,6 +1041,7 @@ pathologies:
     color: "#16a085"
     fields:
       - id: cie10_subcodigo
+        group: diagnostico
         code: ICD10_SUB
         type: select
         required: false
@@ -971,6 +1052,7 @@ pathologies:
           - {code: C65, es: "C65 — Pelvis renal", en: "C65 — Renal pelvis"}
           - {code: C66, es: "C66 — Uréter",       en: "C66 — Ureter"}
       - id: localizacion
+        group: diagnostico
         code: LOCATION
         type: select
         required: false
@@ -985,6 +1067,7 @@ pathologies:
       - *lateralidad
       - *fecha_diagnostico
       - id: histologia
+        group: diagnostico
         code: HISTOLOGY
         type: select
         required: false
@@ -996,6 +1079,7 @@ pathologies:
           - {code: ADENOCARCINOMA,      es: "Adenocarcinoma",          en: "Adenocarcinoma"}
           - {code: OTRO,                es: "Otro",                    en: "Other"}
       - id: grado
+        group: diagnostico
         code: GRADE
         type: select
         required: false
@@ -1006,12 +1090,14 @@ pathologies:
           - {code: ALTO_GRADO, es: "Alto grado", en: "High grade"}
       # ---- Approved addition #3 (also here): CIS recording --------------------
       - id: cis_asociado
+        group: diagnostico
         code: ASSOCIATED_CIS
         type: boolean
         required: false
         label_es: "Carcinoma in situ asociado"
         label_en: "Associated carcinoma in situ"
       - id: tnm_t
+        group: diagnostico
         code: T_STAGE
         type: select
         required: false
@@ -1019,6 +1105,7 @@ pathologies:
         label_en: "T stage (TNM)"
         options: [{code: Ta}, {code: Tis}, {code: T1}, {code: T2}, {code: T3}, {code: T4}, {code: Tx}]
       - id: tnm_n
+        group: diagnostico
         code: N_STAGE
         type: select
         required: false
@@ -1026,6 +1113,7 @@ pathologies:
         label_en: "N stage (TNM)"
         options: [{code: N0}, {code: N1}, {code: N2}, {code: Nx}]
       - id: tnm_m
+        group: diagnostico
         code: M_STAGE
         type: select
         required: false
@@ -1033,6 +1121,7 @@ pathologies:
         label_en: "M stage (TNM)"
         options: [{code: M0}, {code: M1}, {code: Mx}]
       - id: procedimiento
+        group: tratamiento
         code: PROCEDURE
         type: select
         required: false
@@ -1048,6 +1137,7 @@ pathologies:
           - {code: OTRO,                   es: "Otro",                                     en: "Other"}
       - *fecha_procedimiento
       - id: tac_uro
+        group: diagnostico
         code: CT_UROGRAPHY
         type: select
         required: false
@@ -1061,6 +1151,7 @@ pathologies:
           - {code: METASTASIS,      es: "Metástasis",          en: "Metastases"}
           - {code: OTRO,            es: "Otro",                en: "Other"}
       - id: estado_actual
+        group: seguimiento
         code: CURRENT_STATUS
         type: select
         required: false
@@ -1083,6 +1174,7 @@ pathologies:
     color: "#6c3483"
     fields:
       - id: cie10_subcodigo
+        group: diagnostico
         code: ICD10_SUB
         type: select
         required: false
@@ -1097,6 +1189,7 @@ pathologies:
       - *tamano
       - *fecha_diagnostico
       - id: histologia
+        group: diagnostico
         code: HISTOLOGY
         type: select
         required: false
@@ -1109,6 +1202,7 @@ pathologies:
           - {code: PARAGANGLIOMA_MALIGNO,        es: "Paraganglioma maligno",        en: "Malignant paraganglioma"}
           - {code: OTRO,                         es: "Otro",                         en: "Other"}
       - id: ki67
+        group: diagnostico
         code: KI67_INDEX
         type: number
         unit: "%"
@@ -1116,12 +1210,14 @@ pathologies:
         label_es: "Índice Ki-67 (%)"
         label_en: "Ki-67 index (%)"
       - id: sindrome_cushing
+        group: diagnostico
         code: CUSHING_SYNDROME
         type: boolean
         required: false
         label_es: "Síndrome de Cushing"
         label_en: "Cushing syndrome"
       - id: tnm_t
+        group: diagnostico
         code: T_STAGE
         type: select
         required: false
@@ -1129,6 +1225,7 @@ pathologies:
         label_en: "T stage (TNM)"
         options: [{code: T1}, {code: T2}, {code: T3}, {code: T4}, {code: Tx}]
       - id: tnm_n
+        group: diagnostico
         code: N_STAGE
         type: select
         required: false
@@ -1136,6 +1233,7 @@ pathologies:
         label_en: "N stage (TNM)"
         options: [{code: N0}, {code: N1}, {code: Nx}]
       - id: tnm_m
+        group: diagnostico
         code: M_STAGE
         type: select
         required: false
@@ -1143,6 +1241,7 @@ pathologies:
         label_en: "M stage (TNM)"
         options: [{code: M0}, {code: M1}, {code: Mx}]
       - id: procedimiento
+        group: tratamiento
         code: PROCEDURE
         type: select
         required: false
@@ -1158,6 +1257,7 @@ pathologies:
           - {code: OTRO,                   es: "Otro",                         en: "Other"}
       - *fecha_procedimiento
       - id: tac_torax_abdomen
+        group: diagnostico
         code: CT_CHEST_ABDOMEN
         type: select
         required: false
@@ -1172,6 +1272,7 @@ pathologies:
           - {code: ADENOPATIAS,      es: "Adenopatías",             en: "Adenopathy"}
           - {code: OTRO,             es: "Otro",                    en: "Other"}
       - id: pet_ct
+        group: diagnostico
         code: PET_CT
         type: select
         required: false
@@ -1184,6 +1285,7 @@ pathologies:
           - {code: POSITIVO_GANGLIONAR, es: "Positivo ganglionar", en: "Nodally positive"}
           - {code: POSITIVO_DISTANCIA, es: "Positivo a distancia", en: "Distant positive"}
       - id: estado_actual
+        group: seguimiento
         code: CURRENT_STATUS
         type: select
         required: false
@@ -1206,6 +1308,7 @@ pathologies:
     color: "#784212"
     fields:
       - id: cie10_subcodigo
+        group: diagnostico
         code: ICD10_SUB
         type: text
         required: false
@@ -1214,6 +1317,7 @@ pathologies:
         label_en: "ICD-10 code"
       - *fecha_diagnostico
       - id: histologia
+        group: diagnostico
         code: HISTOLOGY
         type: select
         required: false
@@ -1227,6 +1331,7 @@ pathologies:
           - {code: ENFERMEDAD_PAGET, es: "Enfermedad de Paget",     en: "Paget disease"}
           - {code: OTRO,             es: "Otro",                    en: "Other"}
       - id: grado
+        group: diagnostico
         code: GRADE
         type: select
         required: false
@@ -1237,6 +1342,7 @@ pathologies:
           - {code: G2, es: "G2 moderado",                en: "G2 moderately differentiated"}
           - {code: G3, es: "G3 pobremente diferenciado", en: "G3 poorly differentiated"}
       - id: tnm_t
+        group: diagnostico
         code: T_STAGE
         type: select
         required: false
@@ -1244,6 +1350,7 @@ pathologies:
         label_en: "T stage (TNM)"
         options: [{code: T1}, {code: T2}, {code: T3}, {code: T4}, {code: Tx}]
       - id: tnm_n
+        group: diagnostico
         code: N_STAGE
         type: select
         required: false
@@ -1251,6 +1358,7 @@ pathologies:
         label_en: "N stage (TNM)"
         options: [{code: N0}, {code: N1}, {code: N2}, {code: Nx}]
       - id: tnm_m
+        group: diagnostico
         code: M_STAGE
         type: select
         required: false
@@ -1258,6 +1366,7 @@ pathologies:
         label_en: "M stage (TNM)"
         options: [{code: M0}, {code: M1}, {code: Mx}]
       - id: extension_local
+        group: diagnostico
         code: LOCAL_EXTENT
         type: select
         required: false
@@ -1270,6 +1379,7 @@ pathologies:
           - {code: COMPROMISO_INGUINAL,   es: "Compromiso inguinal",    en: "Inguinal involvement"}
           - {code: OTRO,                  es: "Otro",                   en: "Other"}
       - id: procedimiento
+        group: tratamiento
         code: PROCEDURE
         type: select
         required: false
@@ -1285,6 +1395,7 @@ pathologies:
           - {code: OTRO,                  es: "Otro",                     en: "Other"}
       - *fecha_procedimiento
       - id: tac_abdomen_pelvis
+        group: diagnostico
         code: CT_ABDOMEN_PELVIS
         type: select
         required: false
@@ -1298,6 +1409,7 @@ pathologies:
           - {code: METASTASIS,          es: "Metástasis",             en: "Metastases"}
           - {code: OTRO,                es: "Otro",                   en: "Other"}
       - id: estado_actual
+        group: seguimiento
         code: CURRENT_STATUS
         type: select
         required: false
@@ -1320,6 +1432,7 @@ pathologies:
     color: "#1a5276"
     fields:
       - id: cie10_subcodigo
+        group: diagnostico
         code: ICD10_SUB
         type: text
         required: false
@@ -1327,6 +1440,7 @@ pathologies:
         label_es: "Código CIE-10"
         label_en: "ICD-10 code"
       - id: localizacion
+        group: diagnostico
         code: LOCATION
         type: select
         required: false
@@ -1338,6 +1452,7 @@ pathologies:
           - {code: TODA_LA_URETRA,       es: "Toda la uretra",            en: "Entire urethra"}
       - *fecha_diagnostico
       - id: histologia
+        group: diagnostico
         code: HISTOLOGY
         type: select
         required: false
@@ -1350,6 +1465,7 @@ pathologies:
           - {code: CELULAS_CLARAS,      es: "Carcinoma de células claras", en: "Clear cell carcinoma"}
           - {code: OTRO,                es: "Otro",                      en: "Other"}
       - id: tnm_t
+        group: diagnostico
         code: T_STAGE
         type: select
         required: false
@@ -1357,6 +1473,7 @@ pathologies:
         label_en: "T stage (TNM)"
         options: [{code: T1}, {code: T2}, {code: T3}, {code: T4a}, {code: T4b}, {code: Tx}]
       - id: tnm_n
+        group: diagnostico
         code: N_STAGE
         type: select
         required: false
@@ -1364,6 +1481,7 @@ pathologies:
         label_en: "N stage (TNM)"
         options: [{code: N0}, {code: N1}, {code: N2}, {code: Nx}]
       - id: tnm_m
+        group: diagnostico
         code: M_STAGE
         type: select
         required: false
@@ -1371,6 +1489,7 @@ pathologies:
         label_en: "M stage (TNM)"
         options: [{code: M0}, {code: M1}, {code: Mx}]
       - id: procedimiento
+        group: tratamiento
         code: PROCEDURE
         type: select
         required: false
@@ -1387,6 +1506,7 @@ pathologies:
           - {code: OTRO,                   es: "Otro",                         en: "Other"}
       - *fecha_procedimiento
       - id: cistoscopia
+        group: diagnostico
         code: CYSTOSCOPY
         type: select
         required: false
@@ -1398,6 +1518,7 @@ pathologies:
           - {code: COMPROMISO_VESICAL,  es: "Compromiso vesical",   en: "Bladder involvement"}
           - {code: OTRO,                es: "Otro",                 en: "Other"}
       - id: tac_rmn_pelvis
+        group: diagnostico
         code: CT_MRI_PELVIS
         type: select
         required: false
@@ -1411,6 +1532,7 @@ pathologies:
           - {code: METASTASIS,         es: "Metástasis",          en: "Metastases"}
           - {code: OTRO,               es: "Otro",                en: "Other"}
       - id: estado_actual
+        group: seguimiento
         code: CURRENT_STATUS
         type: select
         required: false
