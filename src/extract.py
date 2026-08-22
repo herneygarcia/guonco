@@ -37,8 +37,9 @@ Return ONLY a JSON object:
 
 Hard rules:
 1. Use exactly the field_ids provided. No other keys.
-2. For select fields, output the exact option CODE given in parentheses — \
-never the display text.
+2. For select fields, output the exact option CODE string, copied \
+character-for-character from the list (e.g. if the options include 7_4+3, \
+write exactly "7_4+3"). Never reformat, translate, or paraphrase codes.
 3. Numbers as plain numbers ("PSA de doce" -> 12). Dates as YYYY-MM-DD.
 4. If a variable is not explicitly stated, OMIT it entirely. Never guess, \
 never infer beyond what was said.
@@ -46,7 +47,10 @@ never infer beyond what was said.
 6. When ONE tumor is described with MULTIPLE histological subtypes, choose \
 the mixed/combined option of the histologia field (e.g. "tumor mixto de \
 células germinales") rather than a single subtype.
-7. notes: mention dictation fragments you could not map to any variable.\
+7. When several events/statuses over time are mentioned (e.g. "recurrencia \
+local, luego perdido para el control"), estado_actual reflects the MOST \
+RECENT one.
+8. notes: mention dictation fragments you could not map to any variable.\
 """
 
 

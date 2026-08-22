@@ -134,6 +134,7 @@ common_fields:
 _shared:
   fecha_diagnostico: &fecha_diagnostico
     id: fecha_diagnostico
+    group: diagnostico
     code: DX_DATE
     type: date
     required: false
@@ -142,6 +143,7 @@ _shared:
 
   fecha_procedimiento: &fecha_procedimiento
     id: fecha_procedimiento
+    group: tratamiento
     code: PROC_DATE
     type: date
     required: false
@@ -150,6 +152,7 @@ _shared:
 
   proximo_seguimiento: &proximo_seguimiento
     id: proximo_seguimiento
+    group: seguimiento
     code: NEXT_FU
     type: date
     required: false
@@ -158,6 +161,7 @@ _shared:
 
   observaciones: &observaciones
     id: observaciones
+    group: seguimiento
     code: NOTES
     type: textarea
     required: false
@@ -166,6 +170,7 @@ _shared:
 
   lateralidad: &lateralidad
     id: lateralidad
+    group: diagnostico
     code: LATERALITY
     type: select
     required: false
@@ -178,6 +183,7 @@ _shared:
 
   tamano: &tamano
     id: tamano
+    group: diagnostico
     code: TUMOR_SIZE
     type: number
     unit: cm

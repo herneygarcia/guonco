@@ -28,11 +28,19 @@ def test_string_number_coerced():
     assert cleaned["psa_diagnostico"] == 12.5
 
 
-def test_bad_option_code_rejected():
-    # Spanish display string, not code — must fail (language-neutral storage).
-    with pytest.raises(ValidationFailure) as exc:
-        validate_fields("vejiga", {"grado_who": "Alto grado"})
-    assert "grado_who" in exc.value.errors
+def test_display_label_resolves_to_code():
+    # LLM/UI may emit a display string; storage must still be the neutral code.
+    cleaned = validate_fields("vejiga", {"grado_who": "Alto grado"})
+    assert cleaned["grado_who"] == "ALTO_GRADO"
+    # Spacing/case variants of codes resolve too.
+    assert validate_fields("prostata", {"gleason": "7 (4+3)"})["gleason"] == "7_4+3"
+
+
+def test_genuinely_invalid_option_rejected():
+    with pytest.raises(ValidationFailure):
+        validate_fields("vejiga", {"grado_who": "grado intermedio"})
+    with pytest.raises(ValidationFailure):
+        validate_fields("testiculo", {"tnm_s": "S9"})
 
 
 def test_unknown_field_rejected():

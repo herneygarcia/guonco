@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>GuOnco — Registro GU Onco</title>
+  <meta name="theme-color" content="#fafaf7" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231b1e20'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23fafaf7'/%3E%3C/svg%3E" />
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="var(--ink)"/><circle cx="16" cy="16" r="6" fill="var(--paper)"/></svg>
+      GuOnco
+      <span class="brand-sub">Registro GU Onco / GU Registry</span>
+    </div>
+    <div class="top-actions">
+      <a class="btn ghost" href="/api/export.xlsx" download>Exportar ↓</a>
+      <button class="btn ghost" id="sync-btn" type="button">Sincronizar</button>
+      <span class="sync-dot" id="sync-dot" title=""></span>
+    </div>
+  </header>
+
+  <main>
+    <nav class="chips" id="chips" aria-label="Patología / Pathology"></nav>
+
+    <div class="empty" id="empty-state">
+      <p class="empty-line">Elige una patología para comenzar.</p>
+      <p class="empty-line en">Choose a pathology to begin.</p>
+    </div>
+
+    <section class="dictation" id="dictation" hidden>
+      <div class="dictation-head">
+        <h2 class="eyebrow">Dictado / Dictation</h2>
+        <span class="cie-tag mono" id="cie-tag"></span>
+      </div>
+      <div class="mic-row">
+        <button class="mic" id="mic" type="button" aria-label="Dictar / Record">
+          <span class="mic-ring" aria-hidden="true"></span>
+          <span class="mic-ring r2" aria-hidden="true"></span>
+          <svg class="mic-icon" viewBox="0 0 24 24" width="26" height="26" fill="none"
+               stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <rect x="9" y="3" width="6" height="11" rx="3"/>
+            <path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>
+          </svg>
+          <svg class="stop-icon" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+            <rect x="6.5" y="6.5" width="11" height="11" rx="2.5" fill="currentColor"/>
+          </svg>
+        </button>
+        <p class="mic-hint" id="mic-hint">Toca y dicta<br /><span class="en">Tap and dictate</span></p>
+      </div>
+      <div class="transcript-wrap" id="transcript-wrap" hidden>
+        <label class="field-label" for="transcript">
+          Transcripción <span class="en">Transcript — puedes editarla / you can edit it</span>
+        </label>
+        <textarea id="transcript" rows="4" spellcheck="false"></textarea>
+        <button class="btn primary extract-btn" id="extract-btn" type="button">
+          Extraer variables <span class="en">Extract variables</span>
+        </button>
+      </div>
+    </section>
+
+    <form id="record-form" hidden></form>
+
+    <template id="tpl-field">
+      <div class="field">
+        <label class="field-label"><span class="lbl-es"></span><span class="lbl-en"></span></label>
+        <div class="control"></div>
+      </div>
+    </template>
+  </main>
+
+  <footer class="actionbar" id="actionbar" hidden>
+    <span class="pending-note mono" id="pending-note"></span>
+    <button class="btn primary save-btn" id="save-btn" type="button">
+      Guardar paciente <span class="en">Save patient</span>
+    </button>
+  </footer>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

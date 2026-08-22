@@ -72,7 +72,7 @@ def test_record_crud_roundtrip(client):
 def test_validation_error_is_422_with_field_detail(client):
     r = client.post(
         "/api/records",
-        json={"pathology": "vejiga", "fields": {"grado_who": "Alto grado"}},
+        json={"pathology": "vejiga", "fields": {"grado_who": "grado intermedio"}},
     )
     assert r.status_code == 422
     assert "grado_who" in r.json()["detail"]["errors"]

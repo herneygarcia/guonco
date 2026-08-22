@@ -12,6 +12,7 @@ Rules (specs/api_contract.md):
 from __future__ import annotations
 
 import datetime as dt
+import re
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, ValidationError, model_validator
@@ -20,6 +21,37 @@ from src import schema
 
 TRUTHY = {"true", "1", "si", "sí", "yes"}
 FALSY = {"false", "0", "no"}
+
+
+def _norm(text: str) -> str:
+    return re.sub(r"[\s_\-]+", "", str(text).lower())
+
+
+def resolve_select(field: dict, value: Any) -> str:
+    """Map a select value to its canonical code.
+
+    Accepts exact codes and near-misses (case/spacing variants, or the es/en
+    display labels) so LLM output that drifts from code format still lands on
+    the language-neutral code. Raises ValueError when nothing matches.
+    """
+    options = field.get("options", [])
+    raw = str(value)
+    for o in options:
+        if o["code"] == raw:
+            return o["code"]
+    target = _norm(raw)
+    for o in options:  # normalized code match
+        if _norm(o["code"]) == target:
+            return o["code"]
+    for o in options:  # display-label match
+        if target and (
+            _norm(o.get("es", "")) == target or _norm(o.get("en", "")) == target
+        ):
+            return o["code"]
+    raise ValueError(
+        f"'{value}' is not an allowed code "
+        f"({'|'.join(sorted(o['code'] for o in options))})"
+    )
 
 
 class ValidationFailure(Exception):
@@ -69,13 +101,7 @@ def coerce_value(field: dict, value: Any) -> Any:
             raise ValueError(f"'{text}' is not a YYYY-MM-DD date") from None
         return text
     if ftype == "select":
-        codes = {o["code"] for o in field.get("options", [])}
-        if value not in codes:
-            raise ValueError(
-                f"'{value}' is not an allowed code "
-                f"({'|'.join(sorted(codes))})"
-            )
-        return value
+        return resolve_select(field, value)
     # text / textarea
     return str(value)
 
