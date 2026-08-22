@@ -37,6 +37,15 @@ def _row_to_record(row: sqlite3.Row, pathology_key: str) -> dict[str, Any]:
     return out
 
 
+def apply_auto_fields(pathology_key: str, fields: dict[str, Any]) -> dict[str, Any]:
+    """Fill fields marked `auto: today` (per dictionary) when omitted/empty."""
+    out = {k: v for k, v in fields.items() if v not in ("", None)}
+    for f in schema.PATHOLOGIES[pathology_key]["fields"]:
+        if f.get("auto") == "today" and f["id"] not in out:
+            out[f["id"]] = datetime.now(timezone.utc).date().isoformat()
+    return out
+
+
 def save_record(
     pathology_key: str,
     fields: dict[str, Any],
@@ -45,7 +54,7 @@ def save_record(
 ) -> dict[str, Any]:
     if pathology_key not in schema.PATHOLOGIES:
         raise KeyError(f"unknown pathology '{pathology_key}'")
-    cleaned = validate_fields(pathology_key, fields)
+    cleaned = validate_fields(pathology_key, apply_auto_fields(pathology_key, fields))
 
     own = conn is None
     conn = conn or get_connection()

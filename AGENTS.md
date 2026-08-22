@@ -14,6 +14,9 @@ Groq LLM extraction, Google Sheets backup via Apps Script. Bilingual ES/EN.
   field ids, labels, or option values anywhere else.
 - `src/schema.py` is GENERATED from the YAML. Do not hand-edit it — change the
   YAML and regenerate.
+- Fields marked `auto: today` in the dictionary are filled automatically by
+  the server (and prefilled in the UI) when omitted; an explicit value wins.
+  Do not add other hard-coded auto-fill logic.
 - Specs (`specs/*.md`) govern behavior. If code and spec disagree, fix the code
   or propose a spec change explicitly.
 

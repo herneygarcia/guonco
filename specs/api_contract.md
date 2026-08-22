@@ -66,6 +66,9 @@ dropped (not stored) and reported in `unmapped_notes`.
 ```
 Response: full saved record incl. server-assigned `_id` (if omitted),
 timestamps and `"sync_status": "pending"`. Upsert semantics on `_id`.
+Fields marked `auto: today` in the dictionary (currently `fecha_registro`)
+are filled with today's date when omitted or empty; an explicit value
+always wins.
 Validation: 422 if any field id/value violates the dictionary.
 
 ### GET /api/records?pathology=vejiga&limit=50&offset=0&status=pending

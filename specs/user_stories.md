@@ -29,9 +29,11 @@ dictionary codes; values not stated appear as blank, never invented.
 
 **US4 — Correct and save**
 I fix anything wrong (dropdowns, typing), then tap Save. Record goes to local
-SQLite with status "pending sync". *Acceptance:* save < 1 s; validation
-rejects impossible values (422) with a clear bilingual message; record
-retrievable by historia_clinica.
+SQLite with status "pending sync". Registry date comes prefilled with today
+(auto field); unstated fields never block saving.
+*Acceptance:* save < 1 s; validation rejects impossible values (422) with a
+clear bilingual message; record retrievable by historia_clinica; an omitted
+fecha_registro is filled server-side with today's date.
 
 ## Data management
 

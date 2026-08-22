@@ -69,6 +69,30 @@ def test_record_crud_roundtrip(client):
     assert client.get(f"/api/records/{rid}").status_code == 404
 
 
+def test_registry_date_auto_filled(client):
+    import datetime as dt
+
+    r = client.post(
+        "/api/records",
+        json={"pathology": "pene", "fields": {"historia_clinica": "AUTO-1"}},
+    )
+    rec = r.json()
+    today = dt.date.today().isoformat()
+    assert rec["fields"]["fecha_registro"] == today
+
+    # An explicit value always wins over the auto fill.
+    r2 = client.post(
+        "/api/records",
+        json={
+            "pathology": "pene",
+            "fields": {"historia_clinica": "AUTO-2", "fecha_registro": "2026-01-15"},
+        },
+    )
+    assert r2.json()["fields"]["fecha_registro"] == "2026-01-15"
+    client.delete(f"/api/records/{rec['_id']}")
+    client.delete(f"/api/records/{r2.json()['_id']}")
+
+
 def test_validation_error_is_422_with_field_detail(client):
     r = client.post(
         "/api/records",

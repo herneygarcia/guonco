@@ -184,6 +184,7 @@ function mkInput(field, type) {
   input.id = `f-${field.id}`;
   input.dataset.fieldId = field.id;
   if (field.default) input.value = field.default;
+  else if (field.auto === "today") input.value = new Date().toISOString().slice(0, 10);
   return input;
 }
 
