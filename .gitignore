@@ -1,0 +1,26 @@
+# Secrets — NEVER commit
+.env
+*.key
+
+# Data — patient data never leaves this machine via git
+data/
+*.sqlite
+*.sqlite3
+*.db
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# Exports
+exports/
+*.xlsx
+!tests/fixtures/*.xlsx
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
