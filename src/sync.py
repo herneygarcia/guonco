@@ -67,7 +67,8 @@ def sync_pending() -> dict[str, Any]:
         return {"synced": 0, "message": "nothing to sync"}
 
     payload = build_sync_payload(pending)
-    response = httpx.post(url, json=payload, timeout=TIMEOUT_S)
+    # Apps Script answers with a 302 to script.googleusercontent.com — follow it
+    response = httpx.post(url, json=payload, timeout=TIMEOUT_S, follow_redirects=True)
     response.raise_for_status()
     result = response.json()
     if not result.get("ok"):
