@@ -136,9 +136,11 @@ def test_export_xlsx_endpoint(client):
 
 
 def test_sync_status_and_unconfigured_sync(client, monkeypatch):
+    # Isolate from a possibly-configured local .env
+    monkeypatch.setattr("src.main.apps_script_url", lambda: None)
+    monkeypatch.setattr("src.sync.apps_script_url", lambda: None)
     st = client.get("/api/sync/status").json()
     assert st["pending"] == 0 and st["apps_script_configured"] is False
-    monkeypatch.delenv("APPS_SCRIPT_URL", raising=False)
     r = client.post("/api/sync")
     assert r.status_code == 503
 
