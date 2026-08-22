@@ -82,8 +82,9 @@ cases:
     pathology: prostata
     lang: es
     transcript: >
-      Hombre de 66 años con cáncer de próstata, PSA veinte, Gleason nueve más cuatro más cinco? no,
-      perdón, nueve más cuatro más cuatro, ISUP cuatro. Gammagrafía ósea sin alteraciones.
+      Hombre de 66 años con cáncer de próstata, PSA veinte. En la biopsia:
+      Gleason nueve más cuatro más cinco... no, perdón, me corregí:
+      es Gleason ocho más cuatro más cuatro, ISUP cuatro. Gammagrafía ósea sin alteraciones.
     expected:
       edad: 66
       psa_diagnostico: 20
@@ -209,8 +210,8 @@ cases:
     pathology: testiculo
     lang: es
     transcript: >
-      Orquiectomía radical derecha. Seminoma clásico puro. AFP tres, BHCG uno punto dos,
-      LDH doscientos cincuenta. pT1a, estadio IGCCCG IA. Vigilancia activa.
+      Tumor testicular derecho, seminoma clásico puro. AFP tres, BHCG uno punto dos,
+      LDH doscientos cincuenta. pT1a, estadio IGCCCG IA. Manejo con vigilancia activa.
     expected:
       lateralidad: DERECHO
       histologia: SEMINOMA_CLASICO
@@ -226,8 +227,8 @@ cases:
     pathology: testiculo
     lang: en
     transcript: >
-      Left orchiectomy for mixed germ cell tumor with embryonal carcinoma and mature teratoma.
-      Non-seminoma type. Received three cycles of BEP chemotherapy.
+      Left testicular mass: mixed germ cell tumor with embryonal carcinoma and
+      mature teratoma components. Non-seminoma type. Received three cycles of BEP chemotherapy.
     expected:
       lateralidad: IZQUIERDO
       histologia: TUMOR_MIXTO_GERMINAL

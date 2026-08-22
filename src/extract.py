@@ -11,15 +11,21 @@ Rules per specs/extraction_spec.md:
 from __future__ import annotations
 
 import json
+import os
+import time
 from typing import Any
 
-from groq import Groq
+from groq import Groq, RateLimitError
 
 from src import schema
 from src.config import groq_api_key
 from src.validation import coerce_value
 
-MODEL = "llama-3.3-70b-versatile"
+DEFAULT_MODEL = "openai/gpt-oss-120b"
+
+
+def _model() -> str:
+    return os.environ.get("GROQ_EXTRACT_MODEL", DEFAULT_MODEL)
 
 SYSTEM_PROMPT = """\
 You are a medical data extraction engine for a genitourinary oncology \
@@ -37,7 +43,10 @@ never the display text.
 4. If a variable is not explicitly stated, OMIT it entirely. Never guess, \
 never infer beyond what was said.
 5. Negations matter: "sin metástasis" -> M0 only if staging is clearly stated.
-6. notes: mention dictation fragments you could not map to any variable.\
+6. When ONE tumor is described with MULTIPLE histological subtypes, choose \
+the mixed/combined option of the histologia field (e.g. "tumor mixto de \
+células germinales") rather than a single subtype.
+7. notes: mention dictation fragments you could not map to any variable.\
 """
 
 
@@ -67,12 +76,25 @@ def _client() -> Groq:
     return Groq(api_key=key)
 
 
+def _create_with_retry(client: Groq, **kwargs: Any) -> Any:
+    delay = 1.0
+    for attempt in range(6):
+        try:
+            return client.chat.completions.create(**kwargs)
+        except RateLimitError:
+            if attempt == 5:
+                raise
+            time.sleep(delay)  # free tier TPM limit; back off and retry
+            delay = min(delay * 2, 30.0)
+
+
 def extract_fields(pathology_key: str, transcript: str) -> dict[str, Any]:
     if pathology_key not in schema.PATHOLOGIES:
         raise KeyError(f"unknown pathology '{pathology_key}'")
 
-    completion = _client().chat.completions.create(
-        model=MODEL,
+    completion = _create_with_retry(
+        _client(),
+        model=_model(),
         temperature=0,
         response_format={"type": "json_object"},
         messages=[
