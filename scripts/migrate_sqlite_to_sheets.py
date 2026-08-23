@@ -9,13 +9,18 @@ in .env. Safe to re-run: rows are upserted by _id.
 
 from __future__ import annotations
 
+import pathlib
 import sys
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+
 from src import records
+from src.db import init_db
 from src.sync import build_sync_payload, post_script
 
 
 def main() -> None:
+    init_db()  # ensures older SQLite files gain the new meta columns first
     all_records, total = records.list_records(limit=100_000)
     if not all_records:
         print("no local records to migrate")

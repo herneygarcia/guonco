@@ -31,8 +31,16 @@
    (the `/exec` URL stays the same).
 3. Existing rows keep working: the script automatically appends the new
    `_creado_por`, `_actualizado_por` and `_json` columns to old sheets.
-4. Press **Sincronizar** in the app once so existing records gain their
-   `_json` column (needed for reads in `STORE=sheets` mode).
+4. Backfill existing records so they gain their `_json` column (needed for
+   reads in `STORE=sheets` mode):
+
+   ```bash
+   .venv/bin/python scripts/migrate_sqlite_to_sheets.py
+   ```
+
+   Note: pressing **Sincronizar** is not enough — it only pushes *pending*
+   records, and already-synced ones are skipped. The migration script
+   upserts every record by `_id` (never duplicates) and is safe to re-run.
 
 ## Notes
 
