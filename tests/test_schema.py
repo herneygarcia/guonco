@@ -91,7 +91,15 @@ def test_ddl_executes(key):
         conn.execute(schema.SQL_DDL[key])
         cols = [r[1] for r in conn.execute(f"PRAGMA table_info({key})")]
         field_ids = [f["id"] for f in schema.PATHOLOGIES[key]["fields"]]
-        assert cols[4:] == field_ids  # first four are _meta columns
+        assert cols[:6] == [
+            "_id",
+            "_created_at",
+            "_updated_at",
+            "_sync_status",
+            "_creado_por",
+            "_actualizado_por",
+        ]
+        assert cols[6:] == field_ids  # leading columns are _meta columns
     finally:
         conn.close()
 

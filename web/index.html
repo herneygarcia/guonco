@@ -21,11 +21,29 @@
       <span class="brand-sub">Registro GU Onco / GU Registry</span>
     </div>
     <div class="top-actions">
+      <span class="user-badge" id="user-badge" hidden></span>
       <a class="btn ghost" href="/api/export.xlsx" download>Exportar ↓</a>
       <button class="btn ghost" id="sync-btn" type="button">Sincronizar</button>
       <span class="sync-dot" id="sync-dot" title=""></span>
     </div>
   </header>
+
+  <div class="auth-overlay" id="auth-overlay" hidden>
+    <form class="auth-card" id="auth-form">
+      <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="var(--ink)"/><circle cx="16" cy="16" r="6" fill="var(--paper)"/></svg>
+      <h1 class="auth-title">GuOnco</h1>
+      <p class="auth-sub">
+        Ingresa tu código para continuar
+        <span class="en">Enter your code to continue</span>
+      </p>
+      <input class="auth-input mono" id="auth-code" type="password"
+             inputmode="numeric" autocomplete="current-password"
+             placeholder="••••" required />
+      <button class="btn primary auth-btn" id="auth-btn" type="submit">
+        Entrar <span class="en">Sign in</span>
+      </button>
+    </form>
+  </div>
 
   <main>
     <nav class="chips" id="chips" aria-label="Patología / Pathology"></nav>

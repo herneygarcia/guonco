@@ -6,17 +6,26 @@ import contextlib
 import pathlib
 from typing import Any
 
-from fastapi import Body, FastAPI, File, HTTPException, UploadFile
+from fastapi import Body, FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.responses import JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 
-from src import export, records, schema, validation
+from src import auth as auth_mod
+from src import export, schema, store, validation
 from src import sync as sync_mod
-from src.config import apps_script_url, groq_api_key
+from src.config import (
+    app_pins,
+    apps_script_url,
+    groq_api_key,
+    session_secret,
+    store_mode,
+)
 from src.db import init_db
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 WEB_DIR = ROOT / "web"
+
+PUBLIC_API_PATHS = {"/api/login", "/api/session", "/api/logout"}
 
 
 @contextlib.asynccontextmanager
@@ -30,6 +39,32 @@ app = FastAPI(
 )
 
 
+@app.middleware("http")
+async def auth_gate(request: Request, call_next):
+    """When APP_PINS is configured, every /api call needs a session cookie;
+    write methods additionally require an rw (writer) role."""
+    path = request.url.path
+    if app_pins() and path.startswith("/api/") and path not in PUBLIC_API_PATHS:
+        secret = session_secret()
+        token = request.cookies.get(auth_mod.COOKIE_NAME)
+        session = auth_mod.verify_token(token, secret) if token and secret else None
+        if session is None:
+            return JSONResponse({"error": "unauthorized"}, status_code=401)
+        username, role = session
+        request.state.user = username
+        request.state.role = role
+        if request.method in ("POST", "PUT", "DELETE") and role != "rw":
+            return JSONResponse(
+                {"error": "forbidden", "detail": "read-only account"},
+                status_code=403,
+            )
+    return await call_next(request)
+
+
+def _actor(request: Request) -> str | None:
+    return getattr(request.state, "user", None)
+
+
 def _http_error(status: int, error: str, **detail: Any) -> JSONResponse:
     return JSONResponse({"error": error, "detail": detail}, status_code=status)
 
@@ -39,10 +74,59 @@ def _http_error(status: int, error: str, **detail: Any) -> JSONResponse:
 def health() -> dict:
     return {
         "status": "ok",
-        "db": (records.counts_by_status()) is not None,
+        "db": (records_counts_safe()) is not None,
         "groq_key_present": bool(groq_api_key()),
         "apps_script_url_present": bool(apps_script_url()),
+        "store": store_mode(),
+        "auth_enabled": bool(app_pins()),
     }
+
+
+def records_counts_safe():
+    try:
+        return store.counts_by_status()
+    except Exception:
+        return None
+
+
+# ------------------------------------------------------------------- auth ---
+@app.post("/api/login")
+def login(payload: dict = Body(...)) -> Response:
+    session = auth_mod.authenticate(payload.get("code", ""))
+    if session is None:
+        raise HTTPException(401, "código inválido / invalid code")
+    username, role = session
+    token = auth_mod.create_token(username, session_secret() or "guonco")
+    response = JSONResponse({"user": username, "role": role})
+    response.set_cookie(
+        auth_mod.COOKIE_NAME,
+        token,
+        max_age=auth_mod.SESSION_TTL_S,
+        httponly=True,
+        samesite="lax",
+    )
+    return response
+
+
+@app.get("/api/session")
+def session_info(request: Request) -> dict:
+    if not app_pins():
+        return {"enabled": False, "user": None, "role": None}
+    secret = session_secret()
+    token = request.cookies.get(auth_mod.COOKIE_NAME)
+    session = auth_mod.verify_token(token, secret) if token and secret else None
+    return {
+        "enabled": True,
+        "user": session[0] if session else None,
+        "role": session[1] if session else None,
+    }
+
+
+@app.post("/api/logout")
+def logout() -> Response:
+    response = JSONResponse({"ok": True})
+    response.delete_cookie(auth_mod.COOKIE_NAME)
+    return response
 
 
 # ------------------------------------------------------------ dictionary ----
@@ -102,14 +186,14 @@ def extract(payload: dict = Body(...)) -> dict:
 
 # ---------------------------------------------------------------- records ---
 @app.post("/api/records")
-def create_record(payload: dict = Body(...)) -> dict:
+def create_record(request: Request, payload: dict = Body(...)) -> dict:
     key = payload.get("pathology", "")
     fields = payload.get("fields") or {}
     if key not in schema.PATHOLOGIES:
         raise HTTPException(404, f"unknown pathology '{key}'")
     try:
-        return records.save_record(
-            key, fields, record_id=payload.get("_id") or None
+        return store.save_record(
+            key, fields, record_id=payload.get("_id") or None, actor=_actor(request)
         )
     except validation.ValidationFailure as exc:
         return _http_error(422, "validation failed", errors=exc.errors)
@@ -126,7 +210,7 @@ def list_all(
 ) -> dict:
     if pathology and pathology not in schema.PATHOLOGIES:
         raise HTTPException(404, f"unknown pathology '{pathology}'")
-    items, total = records.list_records(
+    items, total = store.list_records(
         pathology_key=pathology, status=status, limit=limit, offset=offset
     )
     return {"records": items, "total": total}
@@ -134,27 +218,31 @@ def list_all(
 
 @app.get("/api/records/{record_id}")
 def get_one(record_id: str) -> dict:
-    rec = records.get_record(record_id)
+    rec = store.get_record(record_id)
     if rec is None:
         raise HTTPException(404, "record not found")
     return rec
 
 
 @app.put("/api/records/{record_id}")
-def update_one(record_id: str, payload: dict = Body(...)) -> dict:
-    existing = records.get_record(record_id)
+def update_one(
+    record_id: str, request: Request, payload: dict = Body(...)
+) -> dict:
+    existing = store.get_record(record_id)
     if existing is None:
         raise HTTPException(404, "record not found")
     merged = {**existing["fields"], **(payload.get("fields") or {})}
     try:
-        return records.save_record(existing["_patologia"], merged, record_id)
+        return store.save_record(
+            existing["_patologia"], merged, record_id, actor=_actor(request)
+        )
     except validation.ValidationFailure as exc:
         return _http_error(422, "validation failed", errors=exc.errors)
 
 
 @app.delete("/api/records/{record_id}")
 def delete_one(record_id: str) -> dict:
-    if not records.delete_record(record_id):
+    if not store.delete_record(record_id):
         raise HTTPException(404, "record not found")
     return {"deleted": record_id}
 
@@ -170,8 +258,9 @@ def do_sync() -> dict:
 
 @app.get("/api/sync/status")
 def sync_status() -> dict:
-    counts = records.counts_by_status()
+    counts = store.counts_by_status()
     counts["apps_script_configured"] = bool(apps_script_url())
+    counts["store"] = store_mode()
     return counts
 
 

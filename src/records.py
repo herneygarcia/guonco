@@ -25,6 +25,8 @@ def _row_to_record(row: sqlite3.Row, pathology_key: str) -> dict[str, Any]:
         "_created_at": row["_created_at"],
         "_updated_at": row["_updated_at"],
         "_sync_status": row["_sync_status"],
+        "_creado_por": row["_creado_por"],
+        "_actualizado_por": row["_actualizado_por"],
         "fields": {},
     }
     for fid, f in fmap.items():
@@ -50,6 +52,7 @@ def save_record(
     pathology_key: str,
     fields: dict[str, Any],
     record_id: str | None = None,
+    actor: str | None = None,
     conn: sqlite3.Connection | None = None,
 ) -> dict[str, Any]:
     if pathology_key not in schema.PATHOLOGIES:
@@ -62,12 +65,25 @@ def save_record(
         now = _now()
         rid = record_id or uuid.uuid4().hex
         existing = conn.execute(
-            f"SELECT _created_at FROM {pathology_key} WHERE _id = ?", (rid,)
+            f"SELECT _created_at, _creado_por FROM {pathology_key} "
+            "WHERE _id = ?",
+            (rid,),
         ).fetchone()
         created_at = existing["_created_at"] if existing else now
-        cols = ["_id", "_created_at", "_updated_at", "_sync_status", *cleaned]
+        creado_por = (
+            existing["_creado_por"] if existing and existing["_creado_por"] else actor
+        )
+        cols = [
+            "_id",
+            "_created_at",
+            "_updated_at",
+            "_sync_status",
+            "_creado_por",
+            "_actualizado_por",
+            *cleaned,
+        ]
         placeholders = ",".join("?" for _ in cols)
-        values = [rid, created_at, now, "pending", *cleaned.values()]
+        values = [rid, created_at, now, "pending", creado_por, actor, *cleaned.values()]
         conn.execute(
             f"INSERT OR REPLACE INTO {pathology_key} ({','.join(cols)}) "
             f"VALUES ({placeholders})",

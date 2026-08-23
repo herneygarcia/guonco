@@ -36,3 +36,50 @@ def apps_script_url() -> str | None:
     load_env()
     url = os.environ.get("APPS_SCRIPT_URL", "").strip()
     return url or None
+
+
+def app_pins() -> dict[str, dict[str, str]]:
+    """Parse APP_PINS env var -> {name: {"pin": str, "role": "rw"|"ro"}}.
+
+    Format: "name:pin[,name:pin[:ro]]..."  Empty/unset means auth disabled.
+    """
+    load_env()
+    raw = os.environ.get("APP_PINS", "").strip()
+    users: dict[str, dict[str, str]] = {}
+    if not raw:
+        return users
+    for entry in raw.split(","):
+        parts = [p.strip() for p in entry.split(":")]
+        if len(parts) < 2 or not parts[0] or not parts[1]:
+            continue
+        role = "ro" if "ro" in parts[2:] else "rw"
+        users[parts[0]] = {"pin": parts[1], "role": role}
+    return users
+
+
+def session_secret() -> str | None:
+    """SESSION_SECRET, or one deterministically derived from APP_PINS."""
+    import hashlib
+
+    load_env()
+    secret = os.environ.get("SESSION_SECRET", "").strip()
+    if secret:
+        return secret
+    pins = os.environ.get("APP_PINS", "").strip()
+    if pins:
+        return "derived:" + hashlib.sha256(pins.encode("utf-8")).hexdigest()
+    return None
+
+
+def script_secret() -> str | None:
+    """Shared secret sent to the Apps Script web app (SCRIPT_SECRET)."""
+    load_env()
+    secret = os.environ.get("SCRIPT_SECRET", "").strip()
+    return secret or None
+
+
+def store_mode() -> str:
+    """'sqlite' (default) or 'sheets' — Google Sheets as source of truth."""
+    load_env()
+    mode = os.environ.get("STORE", "sqlite").strip().lower()
+    return mode if mode in ("sqlite", "sheets") else "sqlite"

@@ -2,8 +2,7 @@
 
 Voice-driven patient registry for genitourinary oncology. Dictate after each
 visit (Spanish or English), the app transcribes, extracts the clinical
-variables, you review and save. Data lives in local SQLite; one click backs it
-up to your own Google Sheets/Drive. Every label is bilingual ES/EN; stored
+variables, you review and save. Every label is bilingual ES/EN; stored
 values are language-neutral codes.
 
 Built spec-first: `specs/data_dictionary.yaml` is the single source of truth
@@ -43,8 +42,37 @@ make apps-script            # generates scripts/apps_script/Code.gs
 ```
 
 Then follow `scripts/apps_script/INSTRUCTIONS.md` (~5 min): create a blank
-spreadsheet, paste the script, deploy as web app, put the `/exec` URL in
-`.env` as `APPS_SCRIPT_URL`.
+spreadsheet, paste the script, **set your `SCRIPT_SECRET`** in both the
+script and `.env`, deploy as web app, put the `/exec` URL in `.env` as
+`APPS_SCRIPT_URL`.
+
+## Logins & roles (multi-user)
+
+Add per-user PINs in `.env` to require login and attribute each record:
+
+```
+APP_PINS=herney:1234,carla:5678,estudiante:9999:ro
+```
+
+- `name:pin` — writer: can save/edit/delete; every record is stamped with
+  their name (`registrado_por` column in Sheets).
+- `name:pin:ro` — read-only: can browse and export but not save.
+- Leave empty for single-user local use without login.
+
+## Google Sheets as source of truth (optional)
+
+Set in `.env`:
+
+```
+STORE=sheets
+SCRIPT_SECRET=<same secret as Code.gs>
+APPS_SCRIPT_URL=https://script.google.com/macros/s/XXXX/exec
+```
+
+Saves go straight to your spreadsheet; SQLite remains an automatic offline
+cache (failed writes queue locally and retry via **Sincronizar**). To move
+existing local records into Sheets once: `.venv/bin/python
+scripts/migrate_sqlite_to_sheets.py`.
 
 ## Commands
 
@@ -60,9 +88,12 @@ spreadsheet, paste the script, deploy as web app, put the `/exec` URL in
 
 ```
 Browser/PWA ──► FastAPI (src/main.py)
+                 ├─ /api/login      → per-user PIN sessions (rw / ro)
                  ├─ /api/transcribe → Groq whisper-large-v3
                  ├─ /api/extract    → Groq LLM → dictionary codes
-                 ├─ SQLite (data/guonco.sqlite)   ← source of truth
+                 ├─ store (src/store.py)
+                 │    ├─ STORE=sqlite → SQLite source of truth
+                 │    └─ STORE=sheets → Sheets first, SQLite offline cache
                  ├─ /api/sync       → Apps Script → Google Sheets
                  └─ /api/export.xlsx
 ```

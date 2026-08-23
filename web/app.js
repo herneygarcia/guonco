@@ -6,6 +6,8 @@ const $ = (sel) => document.querySelector(sel);
 const state = {
   pathologies: [],
   active: null,        // pathology spec {key, fields:[...], ...}
+  user: null,          // session username (null = auth disabled)
+  role: null,          // "rw" | "ro"
   mediaRecorder: null,
   audioCtx: null,
   analyser: null,
@@ -24,6 +26,10 @@ async function api(path, opts) {
     headers: opts?.body instanceof FormData ? {} : { "Content-Type": "application/json" },
     ...opts,
   });
+  if (res.status === 401 && path !== "/api/login") {
+    showLogin();
+    throw Object.assign(new Error("Sesión requerida / sign-in required"), { status: 401 });
+  }
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     const detail = data.detail;
@@ -32,9 +38,58 @@ async function api(path, opts) {
       (typeof detail === "string" ? detail : null) ||
       (detail?.errors ? `invalid: ${Object.keys(detail.errors).join(", ")}` : null) ||
       `${res.status} ${res.statusText}`;
-    throw Object.assign(new Error(msg), { detail });
+    throw Object.assign(new Error(msg), { detail, status: res.status });
   }
   return data;
+}
+
+/* -------------------------------------------------------------------- auth */
+function showLogin() {
+  $("#auth-overlay").hidden = false;
+  $("#auth-code").value = "";
+  setTimeout(() => $("#auth-code").focus(), 50);
+}
+
+async function login(e) {
+  e.preventDefault();
+  const btn = $("#auth-btn");
+  btn.disabled = true;
+  try {
+    const sess = await api("/api/login", {
+      method: "POST",
+      body: JSON.stringify({ code: $("#auth-code").value.trim() }),
+    });
+    applySession(sess.user, sess.role);
+    $("#auth-overlay").hidden = true;
+    toast(`Hola, ${sess.user}`);
+  } catch (err) {
+    toast("Código incorrecto / wrong code", true);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function applySession(user, role) {
+  state.user = user;
+  state.role = role;
+  const badge = $("#user-badge");
+  badge.hidden = !user;
+  badge.textContent = user ? `${user}${role === "ro" ? " · lectura" : ""}` : "";
+  badge.title = role === "ro"
+    ? "Cuenta de solo lectura / read-only account"
+    : "Tu cuenta / your account";
+  $("#save-btn").disabled = role === "ro";
+}
+
+async function bootSession() {
+  try {
+    const sess = await api("/api/session");
+    if (!sess.enabled) return; // auth disabled — nothing to do
+    if (sess.user) applySession(sess.user, sess.role);
+    else showLogin();
+  } catch {
+    /* backend down: the normal boot error toast covers it */
+  }
 }
 
 function toast(msg, isError = false) {
@@ -360,8 +415,12 @@ async function saveRecord() {
     renderForm();
     refreshPending();
   } catch (e) {
-    const errors = e.detail?.errors;
-    toast(errors ? `Revisa: ${Object.keys(errors).join(", ")}` : e.message, true);
+    if (e.status === 403) {
+      toast("Cuenta de solo lectura / read-only account", true);
+    } else {
+      const errors = e.detail?.errors;
+      toast(errors ? `Revisa: ${Object.keys(errors).join(", ")}` : e.message, true);
+    }
   }
 }
 
@@ -393,7 +452,9 @@ $("#mic").addEventListener("click", toggleMic);
 $("#extract-btn").addEventListener("click", extractVariables);
 $("#save-btn").addEventListener("click", saveRecord);
 $("#sync-btn").addEventListener("click", syncNow);
+$("#auth-form").addEventListener("submit", login);
 
+bootSession();
 loadPathologies()
   .then(() => {
     const p = new URLSearchParams(location.search).get("p");

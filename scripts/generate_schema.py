@@ -31,6 +31,8 @@ def build_ddl(key: str, fields: list[dict]) -> str:
         "_created_at TEXT NOT NULL",
         "_updated_at TEXT NOT NULL",
         "_sync_status TEXT NOT NULL DEFAULT 'pending'",
+        "_creado_por TEXT",
+        "_actualizado_por TEXT",
     ]
     for f in fields:
         cols.append(f"{f['id']} {SQL_TYPES[f['type']]}")

@@ -7,8 +7,7 @@ from typing import Any
 
 from openpyxl import Workbook
 
-from src import schema
-from src.records import list_records
+from src import schema, store
 
 
 def export_xlsx(pathology_key: str | None = None) -> bytes:
@@ -26,7 +25,7 @@ def export_xlsx(pathology_key: str | None = None) -> bytes:
 
         ws.append(["_id", "patología / pathology"]
                   + [f"{f['label_es']} / {f['label_en']}" for f in fields])
-        records_list, _total = list_records(pathology_key=key, limit=100_000)
+        records_list, _total = store.list_records(pathology_key=key, limit=100_000)
         for r in records_list:
             ws.append([r["_id"], key] + [_cell(r["fields"][f["id"]]) for f in fields])
 
