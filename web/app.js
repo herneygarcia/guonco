@@ -62,6 +62,7 @@ async function login(e) {
     applySession(sess.user, sess.role);
     $("#auth-overlay").hidden = true;
     toast(`Hola, ${sess.user}`);
+    boot(); // load pathologies now that we have a session
   } catch (err) {
     toast("Código incorrecto / wrong code", true);
   } finally {
@@ -454,11 +455,17 @@ $("#save-btn").addEventListener("click", saveRecord);
 $("#sync-btn").addEventListener("click", syncNow);
 $("#auth-form").addEventListener("submit", login);
 
-bootSession();
-loadPathologies()
-  .then(() => {
+async function boot() {
+  try {
+    await loadPathologies();
     const p = new URLSearchParams(location.search).get("p");
-    if (p && state.pathologies.some((x) => x.key === p)) return selectPathology(p);
-  })
-  .catch(() => toast("Backend no disponible — ¿está corriendo el servidor? / backend unavailable, is the server running?", true));
-refreshPending();
+    if (p && state.pathologies.some((x) => x.key === p)) await selectPathology(p);
+    refreshPending();
+  } catch (e) {
+    if (e?.status === 401) return; // login overlay is showing; boot() reruns after login
+    toast("Backend no disponible — ¿está corriendo el servidor? / backend unavailable, is the server running?", true);
+  }
+}
+
+bootSession();
+boot();
