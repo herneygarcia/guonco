@@ -1,0 +1,29 @@
+# Render.com blueprint — GuOnco Registry
+# Deploy: render.com → New → Blueprint → pick this repo.
+# Render reads this file and pre-fills everything; you only paste secrets.
+#
+# Free tier: sleeps after 15 min idle (~50 s wake). Data is safe regardless:
+# Google Sheets is the source of truth (STORE=sheets); the local SQLite file
+# is only an offline fallback cache and may be empty on fresh containers.
+
+services:
+  - type: web
+    name: guonco
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn src.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.13"
+      - key: STORE
+        value: sheets
+      - key: GROQ_API_KEY
+        sync: false          # paste in dashboard — never commit
+      - key: APPS_SCRIPT_URL
+        sync: false
+      - key: SCRIPT_SECRET
+        sync: false
+      - key: APP_PINS
+        sync: false
