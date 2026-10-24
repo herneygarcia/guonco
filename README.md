@@ -23,6 +23,33 @@ Open in **Chrome** (microphone access). From your phone on the same Wi-Fi:
 `http://<your-mac-ip>:8000` — or anywhere via Tailscale. In Chrome mobile,
 use *Add to Home Screen* to install it like an app.
 
+## Start / stop (every session)
+
+**Start**
+
+```bash
+cd ~/Downloads/04_Clinical_Urology/gu_onco   # the project folder
+source .venv/bin/activate                     # prompt shows (.venv)
+make run                                      # → http://localhost:8000
+```
+
+`make run` uses `.venv/bin/...` directly, so activating is optional — it just
+lets you type `pytest`, `python`, etc. without the `.venv/bin/` prefix.
+
+**Stop**
+
+1. In the terminal running the server press **Ctrl+C** — localhost:8000 is
+   now off.
+2. Leave the virtual environment: `deactivate` (the `(.venv)` prefix
+   disappears).
+
+If the terminal was closed and port 8000 is still busy
+(`address already in use`):
+
+```bash
+lsof -ti :8000 | xargs kill
+```
+
 ## Daily use
 
 1. Tap a pathology chip.
