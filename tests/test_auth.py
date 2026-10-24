@@ -226,3 +226,33 @@ def test_pin_and_google_coexist(gclient, monkeypatch):
     assert gclient.get("/api/session").json()["pin_enabled"] is True
     assert _login(gclient, "1111").status_code == 200
     assert _glogin(gclient, "dra.prueba@example.org|1").status_code == 200
+
+
+DOMAIN_USERS = "jefa@uni.example.edu,@uni.example.edu:ro,@hospital.example.org"
+
+
+def test_google_domain_entries(gclient, monkeypatch):
+    monkeypatch.setenv("GOOGLE_USERS", DOMAIN_USERS)
+    # Any account of a listed domain gets that domain's role.
+    assert _glogin(gclient, "otro@uni.example.edu|1").json()["role"] == "ro"
+    assert _glogin(gclient, "medico@hospital.example.org|1").json()["role"] == "rw"
+    # An exact email overrides its domain.
+    assert _glogin(gclient, "Jefa@Uni.Example.edu|1").json()["role"] == "rw"
+
+
+@pytest.mark.parametrize(
+    "email",
+    ["x@fake-uni.example.edu", "x@sub.uni.example.edu", "x@uni.example.edu.co"],
+)
+def test_google_domain_match_is_exact(gclient, monkeypatch, email):
+    monkeypatch.setenv("GOOGLE_USERS", DOMAIN_USERS)
+    assert _glogin(gclient, f"{email}|1").status_code == 401
+
+
+def test_removed_domain_session_revoked(gclient, monkeypatch):
+    monkeypatch.setenv("SESSION_SECRET", "fixed")
+    monkeypatch.setenv("GOOGLE_USERS", DOMAIN_USERS)
+    _glogin(gclient, "otro@uni.example.edu|1")
+    assert gclient.get("/api/records").status_code == 200
+    monkeypatch.setenv("GOOGLE_USERS", "jefa@uni.example.edu")
+    assert gclient.get("/api/records").status_code == 401

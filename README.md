@@ -101,7 +101,13 @@ GOOGLE_USERS=doctor@example.org,student@example.org:ro
 ```
 
 - `email` — writer; `email:ro` — read-only. Records are stamped with the email.
-- Only listed accounts get in; anyone else is rejected even with a valid Google login.
+- `@domain` / `@domain:ro` — every account of that domain (exact match, no
+  subdomains). An exact email overrides its domain, e.g.
+  `GOOGLE_USERS=herney.garcia@correounivalle.edu.co,@correounivalle.edu.co:ro`
+  makes Herney a writer and the rest of Univalle read-only.
+- Only listed accounts/domains get in; anyone else is rejected even with a valid Google login.
+- The OAuth consent screen audience must be **External** (and published) for
+  accounts outside your Google Workspace; **Internal** only admits your own domain.
 - Removing an email logs that person out immediately.
 - With `GOOGLE_USERS` set and `APP_PINS` empty, the login screen shows only the Google button.
 

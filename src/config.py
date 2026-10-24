@@ -65,9 +65,11 @@ def google_client_id() -> str | None:
 
 
 def google_users() -> dict[str, dict[str, str]]:
-    """Parse GOOGLE_USERS env var -> {email: {"role": "rw"|"ro"}}.
+    """Parse GOOGLE_USERS env var -> {email|@domain: {"role": "rw"|"ro"}}.
 
-    Format: "email[:ro],email..."  Emails are matched case-insensitively.
+    Format: "email[:ro],@domain[:ro],..."  "@domain" admits every account of
+    that exact domain; an exact email entry overrides its domain's role.
+    Matched case-insensitively.
     """
     load_env()
     raw = os.environ.get("GOOGLE_USERS", "").strip()

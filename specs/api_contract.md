@@ -36,7 +36,9 @@ immediately when the user is removed from the list.
 `{ "credential": "<Google Identity Services ID token>" }` →
 `{ "user": "<email, lowercased>", "role": "rw"|"ro" }` + session cookie.
 The server verifies signature, audience (`GOOGLE_CLIENT_ID`), issuer, expiry
-and `email_verified`; 401 if any check fails or the email is not in `GOOGLE_USERS`.
+and `email_verified`; 401 if any check fails or the email is not allowed by
+`GOOGLE_USERS` (`email[:ro]` entries, or `@domain[:ro]` for a whole domain;
+an exact email overrides its domain's role).
 
 ### POST /api/logout
 Clears the session cookie.

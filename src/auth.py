@@ -2,7 +2,7 @@
 
 Enabled when APP_PINS and/or GOOGLE_USERS is set (see src.config). Formats:
   APP_PINS=name:pin[,name:pin[:ro]]       # ":ro" suffix = read-only
-  GOOGLE_USERS=email[,email[:ro]]         # needs GOOGLE_CLIENT_ID too
+  GOOGLE_USERS=email[:ro],@domain[:ro]    # needs GOOGLE_CLIENT_ID too
 Google logins send a GIS ID token, verified here; the username is the email.
 Sessions are stateless tokens: base64url(username|expiry|hmac(secret)).
 """
@@ -68,7 +68,7 @@ def authenticate_google(credential: str) -> tuple[str, str] | None:
     from google.auth.transport import requests as google_requests
     from google.oauth2 import id_token
 
-    from src.config import google_client_id, google_users
+    from src.config import google_client_id
 
     client_id = google_client_id()
     if not client_id or not credential:
@@ -82,15 +82,27 @@ def authenticate_google(credential: str) -> tuple[str, str] | None:
     if not claims.get("email_verified"):
         return None
     email = str(claims.get("email", "")).lower()
-    spec = google_users().get(email)
-    return (email, spec["role"]) if spec else None
+    role = _google_role(email)
+    return (email, role) if role else None
+
+
+def _google_role(email: str) -> str | None:
+    """Exact email entry first, then its "@domain" entry."""
+    from src.config import google_users
+
+    users = google_users()
+    email = email.lower()
+    spec = users.get(email) or users.get("@" + email.rpartition("@")[2])
+    return spec["role"] if spec and "@" in email else None
 
 
 def role_of(username: str) -> str | None:
-    from src.config import app_pins, google_users
+    from src.config import app_pins
 
-    spec = app_pins().get(username) or google_users().get(username)
-    return spec["role"] if spec else None
+    spec = app_pins().get(username)
+    if spec:
+        return spec["role"]
+    return _google_role(username)
 
 
 def can_write(username: str) -> bool:
