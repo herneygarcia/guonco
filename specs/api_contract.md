@@ -14,6 +14,33 @@ upstream provider failure).
 { "status": "ok", "db": true, "groq_key_present": true, "apps_script_url_present": false }
 ```
 
+## Auth
+
+Login is required when `APP_PINS` and/or `GOOGLE_USERS` is set. Every other
+`/api/*` call then needs the `guonco_session` cookie (401 otherwise); POST/PUT/
+DELETE also need the `rw` role (403 for `ro`). Sessions last 12 h and end
+immediately when the user is removed from the list.
+
+### GET /api/session
+```json
+{ "enabled": true, "user": "doctor@example.org", "role": "rw",
+  "pin_enabled": true, "google_client_id": "123-abc.apps.googleusercontent.com" }
+```
+`{ "enabled": false, "user": null, "role": null }` when auth is off.
+`google_client_id` is `null` when Google sign-in is not configured.
+
+### POST /api/login
+`{ "code": "1234" }` → `{ "user": "herney", "role": "rw" }` + session cookie; 401 on a bad code.
+
+### POST /api/login/google
+`{ "credential": "<Google Identity Services ID token>" }` →
+`{ "user": "<email, lowercased>", "role": "rw"|"ro" }` + session cookie.
+The server verifies signature, audience (`GOOGLE_CLIENT_ID`), issuer, expiry
+and `email_verified`; 401 if any check fails or the email is not in `GOOGLE_USERS`.
+
+### POST /api/logout
+Clears the session cookie.
+
 ## Dictionary
 
 ### GET /api/pathologies

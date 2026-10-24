@@ -57,17 +57,50 @@ def app_pins() -> dict[str, dict[str, str]]:
     return users
 
 
+def google_client_id() -> str | None:
+    """OAuth Web client ID for Google sign-in (public, not a secret)."""
+    load_env()
+    cid = os.environ.get("GOOGLE_CLIENT_ID", "").strip()
+    return cid or None
+
+
+def google_users() -> dict[str, dict[str, str]]:
+    """Parse GOOGLE_USERS env var -> {email: {"role": "rw"|"ro"}}.
+
+    Format: "email[:ro],email..."  Emails are matched case-insensitively.
+    """
+    load_env()
+    raw = os.environ.get("GOOGLE_USERS", "").strip()
+    users: dict[str, dict[str, str]] = {}
+    for entry in raw.split(","):
+        parts = [p.strip() for p in entry.split(":")]
+        email = parts[0].lower()
+        if "@" not in email:
+            continue
+        role = "ro" if "ro" in parts[1:] else "rw"
+        users[email] = {"role": role}
+    return users
+
+
+def auth_enabled() -> bool:
+    """Login is required whenever any PIN or Google user is configured."""
+    return bool(app_pins() or google_users())
+
+
 def session_secret() -> str | None:
-    """SESSION_SECRET, or one deterministically derived from APP_PINS."""
+    """SESSION_SECRET, or one deterministically derived from the user lists."""
     import hashlib
 
     load_env()
     secret = os.environ.get("SESSION_SECRET", "").strip()
     if secret:
         return secret
-    pins = os.environ.get("APP_PINS", "").strip()
-    if pins:
-        return "derived:" + hashlib.sha256(pins.encode("utf-8")).hexdigest()
+    users = (
+        os.environ.get("APP_PINS", "").strip()
+        or os.environ.get("GOOGLE_USERS", "").strip()
+    )
+    if users:
+        return "derived:" + hashlib.sha256(users.encode("utf-8")).hexdigest()
     return None
 
 

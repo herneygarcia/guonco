@@ -33,15 +33,18 @@
       <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="var(--ink)"/><circle cx="16" cy="16" r="6" fill="var(--paper)"/></svg>
       <h1 class="auth-title">GuOnco</h1>
       <p class="auth-sub">
-        Ingresa tu código para continuar
-        <span class="en">Enter your code to continue</span>
+        Inicia sesión para continuar
+        <span class="en">Sign in to continue</span>
       </p>
-      <input class="auth-input mono" id="auth-code" type="password"
-             inputmode="numeric" autocomplete="current-password"
-             placeholder="••••" required />
-      <button class="btn primary auth-btn" id="auth-btn" type="submit">
-        Entrar <span class="en">Sign in</span>
-      </button>
+      <div class="auth-google" id="google-signin" hidden></div>
+      <div class="auth-pin" id="auth-pin">
+        <input class="auth-input mono" id="auth-code" type="password"
+               inputmode="numeric" autocomplete="current-password"
+               placeholder="código / code" required />
+        <button class="btn primary auth-btn" id="auth-btn" type="submit">
+          Entrar <span class="en">Sign in</span>
+        </button>
+      </div>
     </form>
   </div>
 

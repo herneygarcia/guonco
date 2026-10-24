@@ -18,6 +18,8 @@ def _isolate_real_env(monkeypatch, tmp_path):
     monkeypatch.setattr(config, "ENV_PATH", tmp_path / "does-not-exist")
     for var in (
         "APP_PINS",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_USERS",
         "APPS_SCRIPT_URL",
         "SCRIPT_SECRET",
         "SESSION_SECRET",

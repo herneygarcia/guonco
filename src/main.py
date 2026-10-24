@@ -16,6 +16,8 @@ from src import sync as sync_mod
 from src.config import (
     app_pins,
     apps_script_url,
+    auth_enabled,
+    google_client_id,
     groq_api_key,
     session_secret,
     store_mode,
@@ -25,7 +27,7 @@ from src.db import init_db
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 WEB_DIR = ROOT / "web"
 
-PUBLIC_API_PATHS = {"/api/login", "/api/session", "/api/logout"}
+PUBLIC_API_PATHS = {"/api/login", "/api/login/google", "/api/session", "/api/logout"}
 
 
 @contextlib.asynccontextmanager
@@ -41,10 +43,10 @@ app = FastAPI(
 
 @app.middleware("http")
 async def auth_gate(request: Request, call_next):
-    """When APP_PINS is configured, every /api call needs a session cookie;
+    """When any login is configured, every /api call needs a session cookie;
     write methods additionally require an rw (writer) role."""
     path = request.url.path
-    if app_pins() and path.startswith("/api/") and path not in PUBLIC_API_PATHS:
+    if auth_enabled() and path.startswith("/api/") and path not in PUBLIC_API_PATHS:
         secret = session_secret()
         token = request.cookies.get(auth_mod.COOKIE_NAME)
         session = auth_mod.verify_token(token, secret) if token and secret else None
@@ -78,7 +80,7 @@ def health() -> dict:
         "groq_key_present": bool(groq_api_key()),
         "apps_script_url_present": bool(apps_script_url()),
         "store": store_mode(),
-        "auth_enabled": bool(app_pins()),
+        "auth_enabled": auth_enabled(),
     }
 
 
@@ -90,12 +92,7 @@ def records_counts_safe():
 
 
 # ------------------------------------------------------------------- auth ---
-@app.post("/api/login")
-def login(payload: dict = Body(...)) -> Response:
-    session = auth_mod.authenticate(payload.get("code", ""))
-    if session is None:
-        raise HTTPException(401, "código inválido / invalid code")
-    username, role = session
+def _session_response(request: Request, username: str, role: str) -> Response:
     token = auth_mod.create_token(username, session_secret() or "guonco")
     response = JSONResponse({"user": username, "role": role})
     response.set_cookie(
@@ -104,13 +101,31 @@ def login(payload: dict = Body(...)) -> Response:
         max_age=auth_mod.SESSION_TTL_S,
         httponly=True,
         samesite="lax",
+        secure=request.url.scheme == "https"
+        or request.headers.get("x-forwarded-proto") == "https",
     )
     return response
 
 
+@app.post("/api/login")
+def login(request: Request, payload: dict = Body(...)) -> Response:
+    session = auth_mod.authenticate(payload.get("code", ""))
+    if session is None:
+        raise HTTPException(401, "código inválido / invalid code")
+    return _session_response(request, *session)
+
+
+@app.post("/api/login/google")
+def login_google(request: Request, payload: dict = Body(...)) -> Response:
+    session = auth_mod.authenticate_google(payload.get("credential", ""))
+    if session is None:
+        raise HTTPException(401, "cuenta no autorizada / account not authorized")
+    return _session_response(request, *session)
+
+
 @app.get("/api/session")
 def session_info(request: Request) -> dict:
-    if not app_pins():
+    if not auth_enabled():
         return {"enabled": False, "user": None, "role": None}
     secret = session_secret()
     token = request.cookies.get(auth_mod.COOKIE_NAME)
@@ -119,6 +134,8 @@ def session_info(request: Request) -> dict:
         "enabled": True,
         "user": session[0] if session else None,
         "role": session[1] if session else None,
+        "pin_enabled": bool(app_pins()),
+        "google_client_id": google_client_id(),
     }
 
 

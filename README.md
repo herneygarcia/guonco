@@ -86,6 +86,25 @@ APP_PINS=herney:1234,carla:5678,estudiante:9999:ro
 - `name:pin:ro` — read-only: can browse and export but not save.
 - Leave empty for single-user local use without login.
 
+### Google login (optional, alongside PINs)
+
+1. [Google Cloud Console](https://console.cloud.google.com/apis/credentials) →
+   **Create credentials → OAuth client ID → Web application**.
+2. **Authorized JavaScript origins**: `http://localhost:8000` and your Render
+   URL (e.g. `https://guonco.onrender.com`). No redirect URI is needed.
+3. Put the client ID and the allowed accounts in `.env` (and in the Render
+   dashboard):
+
+```
+GOOGLE_CLIENT_ID=1234567890-abc.apps.googleusercontent.com
+GOOGLE_USERS=doctor@example.org,student@example.org:ro
+```
+
+- `email` — writer; `email:ro` — read-only. Records are stamped with the email.
+- Only listed accounts get in; anyone else is rejected even with a valid Google login.
+- Removing an email logs that person out immediately.
+- With `GOOGLE_USERS` set and `APP_PINS` empty, the login screen shows only the Google button.
+
 ## Google Sheets as source of truth (optional)
 
 Set in `.env`:

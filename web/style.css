@@ -139,6 +139,9 @@ body {
 .auth-input:focus { outline: 2px solid var(--ink); outline-offset: -1px; }
 
 .auth-btn { width: 100%; }
+.auth-google { display: flex; justify-content: center; min-height: 44px; }
+.auth-pin { display: contents; }
+.auth-pin[hidden] { display: none; }
 
 /* ---------------------------------------------------------------- layout */
 main {
