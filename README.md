@@ -111,6 +111,41 @@ GOOGLE_USERS=doctor@example.org,student@example.org:ro
 - Removing an email logs that person out immediately.
 - With `GOOGLE_USERS` set and `APP_PINS` empty, the login screen shows only the Google button.
 
+#### Give someone access (add their email)
+
+Everything lives on one line, `GOOGLE_USERS`, with entries separated by
+commas and **no spaces**:
+
+| Entry | Who gets in |
+|---|---|
+| `persona@gmail.com` | that person, can edit |
+| `persona@gmail.com:ro` | that person, read-only |
+| `@hospital.org` | everyone at that domain, can edit |
+| `@hospital.org:ro` | everyone at that domain, read-only |
+
+**On your computer (local):**
+
+1. Open `.env` in the project folder.
+2. Append the new entry to the end of the `GOOGLE_USERS` line, after a comma:
+   ```
+   GOOGLE_USERS=herney.garcia@correounivalle.edu.co,@correounivalle.edu.co:ro,colega@gmail.com
+   ```
+3. Save, then restart the server: `Ctrl+C` in its terminal, then `make run`.
+
+**On Render (the online app):**
+
+1. [dashboard.render.com](https://dashboard.render.com) → your service → **Environment**.
+2. Edit `GOOGLE_USERS`, append `,colega@gmail.com` → **Save Changes**.
+   Render restarts the app by itself (about a minute).
+
+**To remove someone:** delete their entry (and its comma) the same way. They
+are logged out at their next click.
+
+**People outside Univalle** (Gmail, other hospitals) can only sign in if the
+Google Cloud consent screen is **External** and published:
+Google Cloud → **Pantalla de consentimiento → Público → Hacer externo →
+Publicar app**. Do this once; after that only `GOOGLE_USERS` needs editing.
+
 ## Google Sheets as source of truth (optional)
 
 Set in `.env`:
