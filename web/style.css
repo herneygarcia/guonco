@@ -524,7 +524,9 @@ textarea { resize: vertical; min-height: 88px; }
   .brand-sub { display: none; }
   .top { padding: 12px 14px; }
   main { padding: 14px 14px 130px; }
-  .btn.ghost:not(#sync-btn) { display: none; } /* keep export off tiny bars */
+  .btn.ghost:not(#sync-btn):not(#logout-btn) { display: none; } /* keep export off tiny bars */
+  .btn.ghost#logout-btn[hidden] { display: none; }
+  .user-badge { max-width: 30vw; overflow: hidden; text-overflow: ellipsis; }
   .actionbar { padding-left: 14px; padding-right: 14px; }
   .site-footer {
     flex-direction: column;
