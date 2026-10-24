@@ -85,6 +85,7 @@ APP_PINS=herney:1234,carla:5678,estudiante:9999:ro
   their name (`registrado_por` column in Sheets).
 - `name:pin:ro` — read-only: can browse and export but not save.
 - Leave empty for single-user local use without login.
+- **Salir · Sign out** (top right, next to your name) signs you out; use it on shared computers.
 
 ### Google login (optional, alongside PINs)
 

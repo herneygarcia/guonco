@@ -118,6 +118,19 @@ function applySession(user, role) {
     ? "Cuenta de solo lectura / read-only account"
     : "Tu cuenta / your account";
   $("#save-btn").disabled = role === "ro";
+  $("#logout-btn").hidden = !user;
+}
+
+async function logout() {
+  try {
+    await api("/api/logout", { method: "POST" });
+  } catch {
+    toast("No se pudo cerrar sesión / sign-out failed", true);
+    return;
+  }
+  // Stop Google from silently signing the same account back in.
+  window.google?.accounts?.id?.disableAutoSelect();
+  location.reload(); // fresh state; bootSession shows the login screen
 }
 
 async function bootSession() {
@@ -493,6 +506,7 @@ $("#extract-btn").addEventListener("click", extractVariables);
 $("#save-btn").addEventListener("click", saveRecord);
 $("#sync-btn").addEventListener("click", syncNow);
 $("#auth-form").addEventListener("submit", login);
+$("#logout-btn").addEventListener("click", logout);
 
 async function boot() {
   try {

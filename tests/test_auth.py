@@ -256,3 +256,11 @@ def test_removed_domain_session_revoked(gclient, monkeypatch):
     assert gclient.get("/api/records").status_code == 200
     monkeypatch.setenv("GOOGLE_USERS", "jefa@uni.example.edu")
     assert gclient.get("/api/records").status_code == 401
+
+
+def test_google_logout_clears_session(gclient):
+    _glogin(gclient, "dra.prueba@example.org|1")
+    assert gclient.get("/api/records").status_code == 200
+    assert gclient.post("/api/logout").status_code == 200
+    assert gclient.get("/api/records").status_code == 401
+    assert gclient.get("/api/session").json()["user"] is None
