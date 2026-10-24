@@ -26,7 +26,7 @@ async function api(path, opts) {
     headers: opts?.body instanceof FormData ? {} : { "Content-Type": "application/json" },
     ...opts,
   });
-  if (res.status === 401 && path !== "/api/login") {
+  if (res.status === 401 && !path.startsWith("/api/login")) {
     showLogin();
     throw Object.assign(new Error("Sesión requerida / sign-in required"), { status: 401 });
   }
@@ -47,7 +47,14 @@ async function api(path, opts) {
 function showLogin() {
   $("#auth-overlay").hidden = false;
   $("#auth-code").value = "";
-  setTimeout(() => $("#auth-code").focus(), 50);
+  if (!$("#auth-pin").hidden) setTimeout(() => $("#auth-code").focus(), 50);
+}
+
+function signedIn(sess) {
+  applySession(sess.user, sess.role);
+  $("#auth-overlay").hidden = true;
+  toast(`Hola, ${sess.user}`);
+  boot(); // load pathologies now that we have a session
 }
 
 async function login(e) {
@@ -55,18 +62,49 @@ async function login(e) {
   const btn = $("#auth-btn");
   btn.disabled = true;
   try {
-    const sess = await api("/api/login", {
+    signedIn(await api("/api/login", {
       method: "POST",
       body: JSON.stringify({ code: $("#auth-code").value.trim() }),
-    });
-    applySession(sess.user, sess.role);
-    $("#auth-overlay").hidden = true;
-    toast(`Hola, ${sess.user}`);
-    boot(); // load pathologies now that we have a session
+    }));
   } catch (err) {
     toast("Código incorrecto / wrong code", true);
   } finally {
     btn.disabled = false;
+  }
+}
+
+/* Configure which login options the overlay offers (PIN and/or Google). */
+function setupLoginOptions(sess) {
+  const pin = $("#auth-pin");
+  pin.hidden = !sess.pin_enabled;
+  $("#auth-code").required = !!sess.pin_enabled;
+  if (sess.google_client_id) setupGoogle(sess.google_client_id);
+}
+
+function setupGoogle(clientId) {
+  const script = document.createElement("script");
+  script.src = "https://accounts.google.com/gsi/client";
+  script.async = true;
+  script.onload = () => {
+    google.accounts.id.initialize({ client_id: clientId, callback: googleLogin });
+    const box = $("#google-signin");
+    box.hidden = false;
+    google.accounts.id.renderButton(box, {
+      theme: "outline", size: "large", text: "signin_with", locale: "es",
+    });
+  };
+  script.onerror = () => toast("No se pudo cargar Google / Google sign-in unavailable", true);
+  document.head.appendChild(script);
+}
+
+async function googleLogin(response) {
+  try {
+    signedIn(await api("/api/login/google", {
+      method: "POST",
+      body: JSON.stringify({ credential: response.credential }),
+    }));
+  } catch (err) {
+    toast("Cuenta no autorizada / account not authorized", true);
   }
 }
 
@@ -86,6 +124,7 @@ async function bootSession() {
   try {
     const sess = await api("/api/session");
     if (!sess.enabled) return; // auth disabled — nothing to do
+    setupLoginOptions(sess);
     if (sess.user) applySession(sess.user, sess.role);
     else showLogin();
   } catch {

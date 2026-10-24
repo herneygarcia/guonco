@@ -27,3 +27,9 @@ services:
         sync: false
       - key: APP_PINS
         sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_USERS
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true  # Render creates a random secret

@@ -86,6 +86,66 @@ APP_PINS=herney:1234,carla:5678,estudiante:9999:ro
 - `name:pin:ro` — read-only: can browse and export but not save.
 - Leave empty for single-user local use without login.
 
+### Google login (optional, alongside PINs)
+
+1. [Google Cloud Console](https://console.cloud.google.com/apis/credentials) →
+   **Create credentials → OAuth client ID → Web application**.
+2. **Authorized JavaScript origins**: `http://localhost:8000` and your Render
+   URL (e.g. `https://guonco.onrender.com`). No redirect URI is needed.
+3. Put the client ID and the allowed accounts in `.env` (and in the Render
+   dashboard):
+
+```
+GOOGLE_CLIENT_ID=1234567890-abc.apps.googleusercontent.com
+GOOGLE_USERS=doctor@example.org,student@example.org:ro
+```
+
+- `email` — writer; `email:ro` — read-only. Records are stamped with the email.
+- `@domain` / `@domain:ro` — every account of that domain (exact match, no
+  subdomains). An exact email overrides its domain, e.g.
+  `GOOGLE_USERS=herney.garcia@correounivalle.edu.co,@correounivalle.edu.co:ro`
+  makes Herney a writer and the rest of Univalle read-only.
+- Only listed accounts/domains get in; anyone else is rejected even with a valid Google login.
+- The OAuth consent screen audience must be **External** (and published) for
+  accounts outside your Google Workspace; **Internal** only admits your own domain.
+- Removing an email logs that person out immediately.
+- With `GOOGLE_USERS` set and `APP_PINS` empty, the login screen shows only the Google button.
+
+#### Give someone access (add their email)
+
+Everything lives on one line, `GOOGLE_USERS`, with entries separated by
+commas and **no spaces**:
+
+| Entry | Who gets in |
+|---|---|
+| `persona@gmail.com` | that person, can edit |
+| `persona@gmail.com:ro` | that person, read-only |
+| `@hospital.org` | everyone at that domain, can edit |
+| `@hospital.org:ro` | everyone at that domain, read-only |
+
+**On your computer (local):**
+
+1. Open `.env` in the project folder.
+2. Append the new entry to the end of the `GOOGLE_USERS` line, after a comma:
+   ```
+   GOOGLE_USERS=herney.garcia@correounivalle.edu.co,@correounivalle.edu.co:ro,colega@gmail.com
+   ```
+3. Save, then restart the server: `Ctrl+C` in its terminal, then `make run`.
+
+**On Render (the online app):**
+
+1. [dashboard.render.com](https://dashboard.render.com) → your service → **Environment**.
+2. Edit `GOOGLE_USERS`, append `,colega@gmail.com` → **Save Changes**.
+   Render restarts the app by itself (about a minute).
+
+**To remove someone:** delete their entry (and its comma) the same way. They
+are logged out at their next click.
+
+**People outside Univalle** (Gmail, other hospitals) can only sign in if the
+Google Cloud consent screen is **External** and published:
+Google Cloud → **Pantalla de consentimiento → Público → Hacer externo →
+Publicar app**. Do this once; after that only `GOOGLE_USERS` needs editing.
+
 ## Google Sheets as source of truth (optional)
 
 Set in `.env`:
